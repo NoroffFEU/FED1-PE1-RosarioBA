@@ -1,0 +1,27 @@
+@font-face {
+    font-family: 'Josefin Sans';
+    src: url('../font/JosefinSans-Regular.ttf') format('truetype');
+  }
+  
+  @font-face {
+    font-family: 'Lora';
+    src: url('../font/Lora-Regular.ttf') format('opentype');
+  }
+
+  @font-face {
+    font-family: 'Lora';
+    src: url('../font/Lora-Bold.ttf') format('opentype');
+  }
+  
+body {
+    min-height: 100vh;  
+    margin: 0px;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+}
+
+.logo {
+    font-family: 'Josefin Sans';
+    font-size: 1.5em;   
+    color: rgba(0, 31, 84, 1);
+}
