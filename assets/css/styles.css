@@ -13,6 +13,10 @@
     src: url('../font/Lora-Bold.ttf') format('opentype');
   }
   
+ a, p, h1, h2, h3 {
+    font-family: 'Lora', serif;
+}
+
 body {
     min-height: 100vh;  
     margin: 0px;
@@ -20,8 +24,46 @@ body {
     grid-template-rows: auto 1fr auto;
 }
 
+header {
+  display: flex;
+  align-items: center;
+
+}
+
+header a {
+  padding: 20px;
+}
+
+a {
+  text-decoration: none;
+  color: rgba(33, 75, 110, 1);
+}
+
 .logo {
     font-family: 'Josefin Sans';
     font-size: 1.5em;   
-    color: rgba(0, 31, 84, 1);
+    color: rgba(33, 75, 110, 1);
+    text-align: left;
+    text-decoration: none;
+    max-width: 100px;
+    }
+
+        nav {
+          display: block;
+          position: static;
+          top: 0;
+          text-decoration: none;
+        }
+  
+
+    nav ul{
+      padding: 0px;
+  }
+  
+  nav li {
+      display: inline-block;
+      padding: 0px;
+  }
+  header label {
+    display: none;
 }
