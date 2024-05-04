@@ -24,13 +24,13 @@ body {
     grid-template-rows: auto 1fr auto;
 }
 
-header {
+header, footer {
   display: flex;
   align-items: center;
 
 }
 
-header a {
+header a, footer a {
   padding: 20px;
 }
 
@@ -68,11 +68,20 @@ a {
     display: none;
 }
 
-h1 {
-    font-size: 1rem;
+footer {
+    font-size: 0.7rem;
+    padding: 10px;
+}
+
+footer li {
+    list-style-type: none;
 }
 
 /*carousel*/
+
+h1 {
+    font-size: 1.2rem;
+}
 
  .carousel {
     width: 100vw;
@@ -131,4 +140,20 @@ h1 {
     outline: 1px solid black;
   }
   
-  
+  /*Thumbnail Grid*/
+
+.thumbnail-grid {
+    max-width: 1000px;
+    margin: auto;
+}
+.blogpost-list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0,1fr));
+    grid-gap: 20px;
+}
+ 
+h2 {
+    font-size: 1rem;
+    margin: 0;
+    padding: 0;
+}
