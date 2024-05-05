@@ -158,3 +158,12 @@ h2 {
     padding: 0;
 }
 
+/*blogpost*/
+.blogpost-section {
+    max-width: 800px;
+    margin: auto;
+    text-align: left;
+    line-height: 1.5;
+    padding: 10px;
+}
+
