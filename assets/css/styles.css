@@ -77,6 +77,51 @@ footer li {
     list-style-type: none;
 }
 
+.cta {
+  background-color: rgba(53, 151, 131, 1);
+  color: white;
+  font-size: 1em;
+  text-transform: uppercase;
+  border-radius: 5px;
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+}
+
+.cta::before {
+  content: "";
+  padding: 10px;
+  background: #fff;
+  transform: rotate(45deg);
+  position: absolute;
+  height: 100px;
+  top: -40px;
+  left: -100px;
+  transition: left ease-in-out 1s;
+  opacity: 0.3;
+}
+
+.cta:hover:before {
+  left: 110%;
+}
+
+
+.cta-large {
+  padding:10px 40px;
+}
+
+button {
+  background-color: rgba(53, 151, 131, 1);
+  color: white;
+  padding: 8px 20px;
+  border-radius: 5px;
+  font-size: 0.7em;
+  min-width: 51.2px;
+  text-align: center;
+  margin-top: 5px;
+  float: right;
+}
+
 /*carousel*/
 
 h1 {
