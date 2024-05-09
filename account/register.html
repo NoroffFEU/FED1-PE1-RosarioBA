@@ -1,30 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
-    <link rel="stylesheet" href="../styles.css">
-</head>
-<body>
-    <header>
-        <a href="index.html" class="logo"> HotView Labs</a>
-        <nav>
-            <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="#">Blogs</a></li>
-                <li><a href="#">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Register</title>
+        <link rel="stylesheet" href="../assets/css/styles.css">
+    </head>
+    <body>
+        <header>
+            <a href="index.html" class="logo"> HotView Labs</a>
+            <nav>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Blogs</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </nav>
+        </header>
+        <main class="login-form">
+        <h1>Register</h1>
+         <form method="post" id="register-form" action="/assets/js/api/register.mjs">
+          <div class="form-wrapper">
+            <section>
+              <label for="name">Full name</label>
+              <input type="text" id="name" name="name" required>
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" required>
+              <label for="password">Choose a password</label>
+              <input type="password" id="password" name="password" required>
+              <div>
+               <input type="checkbox" id="email-updates" name="updates">
+               <label for="email-updates">sign up for email updates.</label> 
+              </div>
+            </section>
+          </div>
+         <input type="submit" value="Continue" class="cta cta-large"/>
+             </form>
+        </main>
     
-    <main>
-        <form id="register-form">
-            <!-- Register form fields here -->
-        </form>
-    </main>
-    <footer>
-        <!-- Footer content here -->
-    </footer>
-</body>
-</html>
+        <footer>
+            <!-- Footer content here -->
+        </footer>
