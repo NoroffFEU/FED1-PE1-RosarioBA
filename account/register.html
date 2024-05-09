@@ -3,20 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
-    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script type="module" src="../assets/js/api/constants.mj" defer></script>  
+    <script src="../assets/js/register.mjs" defer></script>
 </head>
 <body>
     <header>
-        <h1>Register</h1>
+        <a href="index.html" class="logo"> HotView Labs</a>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Blogs</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </nav>
     </header>
-    
-    <main>
-        <form id="register-form">
-            <!-- Register form fields here -->
-        </form>
+    <main class="login-form">
+    <h1>Register</h1>
+     <form id="registerform" method="post" action="/auth/register">
+      <div class="form-wrapper">
+        <section>
+          <label for="name">Full name</label>
+          <input type="text" id="name" name="name">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email">
+          <label for="password">Choose a password</label>
+          <input type="password" id="password" name="password">
+          <div>
+           <input type="checkbox" id="email-updates" name="updates">
+           <label for="email-updates">sign up for email updates.</label> 
+          </div>
+        </section>
+      </div>
+     <input type="submit" value="Continue" class="cta cta-large"/>
+         </form>
     </main>
-    
     <footer>
         <!-- Footer content here -->
     </footer>
