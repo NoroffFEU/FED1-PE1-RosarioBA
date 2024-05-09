@@ -1,3 +1,3 @@
-import * as contants from './constants.mjs';
+import { setRegisterFormListener } from "./handlers/register.mjs";
 
-console.log(contants. API);
+setRegisterFormListener();
