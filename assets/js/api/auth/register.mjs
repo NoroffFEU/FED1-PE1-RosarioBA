@@ -1,3 +1,4 @@
+import { API_BASE, API_AUTH, API_REGISTER } from "../contants.mjs";
 export async function register(name, email, password) {
     const response = await fetch(API_BASE + API_AUTH + API_REGISTER, {
         headers: {
