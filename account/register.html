@@ -5,8 +5,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Register</title>
         <link rel="stylesheet" href="../assets/css/styles.css">
-        <link rel="stylesheet" href="../assets/js/index.mjs">
-        
+        <script src="../assets/js/index.mjs"></script>
+        <script src="../assets/js/api/auth/register.mjs" type="module "defer></script>
+
     </head>
     <body>
         <header>
@@ -20,24 +21,25 @@
             </nav>
         </header>
         <main class="login-form">
-        <h1>Register</h1>
-         <form method="post" id="register-form" action="/assets/js/api/register.mjs">
-          <div class="form-wrapper">
-            <section>
-              <label for="name">Full name</label>
-              <input type="text" id="name" name="name" required>
-              <label for="email">Email</label>
-              <input type="email" id="email" name="email" required>
-              <label for="password">Choose a password</label>
-              <input type="password" id="password" name="password" required>
-              <div>
-               <input type="checkbox" id="email-updates" name="updates">
-               <label for="email-updates">sign up for email updates.</label> 
-              </div>
-            </section>
-          </div>
-         <input type="submit" value="Continue" class="cta cta-large"/>
-             </form>
+            <h1>Register</h1>
+            <form method="post" id="register-form">
+                <div class="form-wrapper">
+                    <label for="name">Full name</label>
+                    <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+        
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email address" required>
+        
+                    <label for="password">Choose a password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+        
+                    <div>
+                        <input type="checkbox" id="email-updates" name="updates">
+                        <label for="email-updates">Sign up for email updates.</label> 
+                    </div>
+                </div>
+                <input type="submit" value="Continue" class="cta cta-large"/>
+            </form>
         </main>
     
         <footer>
