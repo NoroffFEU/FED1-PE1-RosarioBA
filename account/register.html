@@ -5,7 +5,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Register</title>
         <link rel="stylesheet" href="../assets/css/styles.css">
-        <script src="../assets/js/index.mjs"></script>
         <script src="../assets/js/api/auth/register.mjs" type="module "defer></script>
 
     </head>
@@ -22,7 +21,7 @@
         </header>
         <main class="login-form">
             <h1>Register</h1>
-            <form method="post" id="register-form">
+            <form method="post" id="register-form" action="/assets/js/api/auth/register">
                 <div class="form-wrapper">
                     <label for="name">Full name</label>
                     <input type="text" id="name" name="name" placeholder="Enter your full name" required>

@@ -1,6 +1,5 @@
-
 export function setAuthListener() {
-    const form = document.querySelector("#registerForm");
+    const form = document.querySelector("#loginForm");
 
     form.setAuthListener("submit", (event) => {
         const form = event.target;
