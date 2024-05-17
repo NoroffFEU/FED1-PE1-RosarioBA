@@ -57,21 +57,46 @@ export async function onAuth(event) {
         await register(name, email, password);
         await login(email, password);
     }
+  
     const posts = await getPosts();
     console.log(posts);
 }
 
+
 export function setAuthListener() {
     const form = document.getElementById("register-form");
+    if (!form) {
+        return;
+    }
     form.addEventListener("submit", onAuth);
+}
+
+
+
+
+export function setAuthListener() {
+    registerEventListener("register-form", onAuth);
+}
+
+export function registerEventListener(formName, callback) {
+    const form = document.getElementById(formName);
+    if (!form) {
+        return;
+    }
+    form.addEventListener("submit", callback);
 }
 
 setAuthListener();
 console.log("Auth listener is set");
 
+
 export function save(key, value) {
     localStorage.setItem(key, JSON.stringify(value));
 }
+
+// function remove(key) {
+// 	localStorage.removeItem(key);
+// }
 
 export async function getPosts() {
     const response = await fetch(API_BASE + "/blog/posts/<name>", { 
@@ -126,7 +151,7 @@ async function createPost(event) {
     });
 
     // Check if the request was successful
-    if (response.ok) {
+    if (response) {
       const data = await response.json();
       console.log('New post created:', data.data);
       // You can redirect the user or show a success message here
