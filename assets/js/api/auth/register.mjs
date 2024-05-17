@@ -62,17 +62,7 @@ export async function onAuth(event) {
     console.log(posts);
 }
 
-
-export function setAuthListener() {
-    const form = document.getElementById("register-form");
-    if (!form) {
-        return;
-    }
-    form.addEventListener("submit", onAuth);
-}
-
-
-
+//*this is making error on my code for create post*//
 
 export function setAuthListener() {
     registerEventListener("register-form", onAuth);
@@ -112,8 +102,55 @@ export function load(key) {
     return JSON.parse(localStorage.getItem(key));
 }
 
+
+
+async function createPost(event) {
+  event.preventDefault(); // Prevent the default form submission
+
+  // Get the form data
+  const title = document.getElementById('title').value;
+  const body = document.getElementById('body').value;
+  const tags = document.getElementById('tags').value.split(',').map(tag => tag.trim());
+  const mediaUrl = document.getElementById('mediaUrl').value;
+  const mediaAlt = document.getElementById('mediaAlt').value;
+
+  // Create the post data object
+  const postData = {
+    title,
+    body,
+    tags,
+    media: {
+      url: mediaUrl,
+      alt: mediaAlt
+    }
+  };
+
+  try {
+    // Send the POST request to create the new post
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(postData)
+    });
+
+    // Check if the request was successful
+    if (response) {
+      const data = await response.json();
+      console.log('New post created:', data.data);
+      // You can redirect the user or show a success message here
+    } else {
+      console.error('Failed to create post:', response.status);
+      // Handle the error case (e.g., display an error message)
+    }
+  } catch (error) {
+    console.error('An error occurred:', error);
+    // Handle any network or other errors
+  }
+}
 // Replace <name> with your registered username
-const apiUrl = `https://api.noroff.dev/v2/blog/posts/<Rosario>`;
+const apiUrl = `https://api.noroff.dev/v2/blog/posts/<ghfusnscshb>`;
 
 // Get the form element and add an event listener for form submission
 const postForm = document.getElementById('postForm');
@@ -165,11 +202,9 @@ async function createPost(event) {
   }
 }
 
-//*lets see if this works*//
-document.addEventListener('DOMContentLoaded', function() {
-    // Your code that accesses the postForm element goes here
+    document.addEventListener('DOMContentLoaded', function() {
     const postForm = document.getElementById('postForm');
     postForm.addEventListener('submit', createPost);
+  });
+
   
-    // ...
-  }); 
