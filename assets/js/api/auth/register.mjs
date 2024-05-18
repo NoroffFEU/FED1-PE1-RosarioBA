@@ -1,14 +1,11 @@
+const API_KEY = "cf7dc630-134f-4432-8cca-cc389127181";
+const API_BASE = "https://v2.api.noroff.dev";
+const API_AUTH = "/auth";
+const API_REGISTER = "/register";
+const API_LOGIN = "/login";
+const API_POSTS_BASE = "/blog/posts";
 
-export const API_KEY = "cf7dc630-134f-4432-8cca-cc389127181";
-
-export const API_BASE = "https://v2.api.noroff.dev";
-export const API_AUTH = "/auth";
-export const API_REGISTER = "/register";
-export const API_LOGIN = "/login";
-export const API_KEY_URL = "/create-api-key";
-export const API_POSTS = "/blog/posts/<name>"
-
-export async function register(name, email, password) {
+async function register(name, email, password) {
     const response = await fetch(API_BASE + API_AUTH + API_REGISTER, {
         headers: {
             "Content-Type": "application/json",
@@ -17,15 +14,14 @@ export async function register(name, email, password) {
         body: JSON.stringify({ name, email, password }),
     });
 
-    if (response) {
+    if (response.ok) {
         return await response.json();
     }
 
     throw new Error("Could not register the account");
 }
 
-
-export async function login(email, password) {
+async function login(email, password) {
     const response = await fetch(API_BASE + API_AUTH + API_LOGIN, {
         headers: {
             "Content-Type": "application/json",
@@ -37,174 +33,175 @@ export async function login(email, password) {
     if (response.ok) {
         const { accessToken, ...profile } = (await response.json()).data;
         save("token", accessToken);
-        console.log("Token saved:", accessToken);
         save("profile", profile);
         return profile;
-    } 
+    }
 
     throw new Error("Could not login the account");
 }
 
-export async function onAuth(event) {
+async function onAuth(event) {
     event.preventDefault();
     const name = event.target.name.value;
     const email = event.target.email.value;
     const password = event.target.password.value;
 
-    if (event.submitter.dataset.auth === "login") {
+    if (event.submitter.innerText.toLowerCase() === "login") {
         await login(email, password);
     } else {
         await register(name, email, password);
         await login(email, password);
     }
-  
+
     const posts = await getPosts();
     console.log(posts);
 }
 
-//*this is making error on my code for create post*//
-
-export function setAuthListener() {
+function setAuthListener() {
     registerEventListener("register-form", onAuth);
 }
 
-export function registerEventListener(formName, callback) {
-    const form = document.getElementById(formName);
+function registerEventListener(formId, callback) {
+    const form = document.getElementById(formId);
+
     if (!form) {
+        console.error(`Form with id ${formId} not found`);
         return;
     }
+
     form.addEventListener("submit", callback);
 }
 
-setAuthListener();
-console.log("Auth listener is set");
-
-
-export function save(key, value) {
+function save(key, value) {
     localStorage.setItem(key, JSON.stringify(value));
 }
 
-// function remove(key) {
-// 	localStorage.removeItem(key);
-// }
-
-export async function getPosts() {
-    const response = await fetch(API_BASE + "/blog/posts/<name>", { 
-        headers: { 
-            Authorization: `Bearer ${load("token")}`,
-            "X-Noroff-API-Key": API_KEY
-        } 
-    });
-    return await response.json();
-}
-
-export function load(key) {
+function load(key) {
     return JSON.parse(localStorage.getItem(key));
 }
 
-
-
-async function createPost(event) {
-  event.preventDefault(); // Prevent the default form submission
-
-  // Get the form data
-  const title = document.getElementById('title').value;
-  const body = document.getElementById('body').value;
-  const tags = document.getElementById('tags').value.split(',').map(tag => tag.trim());
-  const mediaUrl = document.getElementById('mediaUrl').value;
-  const mediaAlt = document.getElementById('mediaAlt').value;
-
-  // Create the post data object
-  const postData = {
-    title,
-    body,
-    tags,
-    media: {
-      url: mediaUrl,
-      alt: mediaAlt
+async function getPosts() {
+    const profile = load("profile");
+    if (!profile) {
+        throw new Error("Profile not found. Please log in.");
     }
-  };
-
-  try {
-    // Send the POST request to create the new post
-    const response = await fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(postData)
+    const response = await fetch(`${API_BASE}${API_POSTS_BASE}/${profile.name}`, {
+        headers: {
+            Authorization: `Bearer ${load("token")}`,
+            "X-Noroff-API-Key": API_KEY,
+        },
     });
 
-    // Check if the request was successful
-    if (response) {
-      const data = await response.json();
-      console.log('New post created:', data.data);
-      // You can redirect the user or show a success message here
-    } else {
-      console.error('Failed to create post:', response.status);
-      // Handle the error case (e.g., display an error message)
+    if (!response.ok) {
+        throw new Error(`Failed to fetch posts: ${response.status} ${response.statusText}`);
     }
-  } catch (error) {
-    console.error('An error occurred:', error);
-    // Handle any network or other errors
-  }
+
+    return await response.json();
 }
-// Replace <name> with your registered username
-const apiUrl = `https://api.noroff.dev/v2/blog/posts/<ghfusnscshb>`;
 
-// Get the form element and add an event listener for form submission
-const postForm = document.getElementById('postForm');
-postForm.addEventListener('submit', createPost);
-
-async function createPost(event) {
-  event.preventDefault(); // Prevent the default form submission
-
-  // Get the form data
-  const title = document.getElementById('title').value;
-  const body = document.getElementById('body').value;
-  const tags = document.getElementById('tags').value.split(',').map(tag => tag.trim());
-  const mediaUrl = document.getElementById('mediaUrl').value;
-  const mediaAlt = document.getElementById('mediaAlt').value;
-
-  // Create the post data object
-  const postData = {
-    title,
-    body,
-    tags,
-    media: {
-      url: mediaUrl,
-      alt: mediaAlt
+async function createPost(postData) {
+    const profile = load("profile");
+    if (!profile) {
+        throw new Error("Profile not found. Please log in.");
     }
-  };
+    const createPostURL = `${API_BASE}${API_POSTS_BASE}/${profile.name}`;
 
-  try {
-    // Send the POST request to create the new post
-    const response = await fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(postData)
+    console.log("Creating post with URL:", createPostURL);
+    console.log("Post data:", postData);
+
+    const response = await fetch(createPostURL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${load("token")}`,
+            "X-Noroff-API-Key": API_KEY,
+        },
+        body: JSON.stringify(postData),
     });
 
-    // Check if the request was successful
-    if (response) {
-      const data = await response.json();
-      console.log('New post created:', data.data);
-      // You can redirect the user or show a success message here
-    } else {
-      console.error('Failed to create post:', response.status);
-      // Handle the error case (e.g., display an error message)
+    if (!response.ok) {
+        const errorResponse = await response.text(); // Get more details about the error
+        console.error("Error response from server:", errorResponse);
+        throw new Error(`Failed to create post: ${response.status} ${response.statusText}`);
     }
-  } catch (error) {
-    console.error('An error occurred:', error);
-    // Handle any network or other errors
-  }
+
+    return await response.json();
 }
 
-    document.addEventListener('DOMContentLoaded', function() {
-    const postForm = document.getElementById('postForm');
-    postForm.addEventListener('submit', createPost);
-  });
+function setCreatePostFormListener() {
+    const form = document.querySelector("#createPost");
 
+    if (form) {
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const formData = new FormData(form);
+            const postData = Object.fromEntries(formData.entries());
+
+            const tagsInput = document.getElementById('tags').value;
+            const tags = tagsInput ? tagsInput.split(',').map(tag => tag.trim()) : [];
+            postData.tags = tags; // 
+
+            try {
+                const newPost = await createPost(postData);
+                console.log('New post created:', newPost.data);
+                // You can redirect the user or show a success message here
+            } catch (error) {
+                console.error('An error occurred:', error);
+                // Handle any network or other errors
+            }
+        });
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    if (document.getElementById("register-form")) {
+        setAuthListener();
+    }
+
+    if (document.getElementById("createPost")) {
+        setCreatePostFormListener();
+    }
+
+    console.log("Event listeners are set");
+});
+
+export { createPost };
+
+async function fetchBlogPosts() {
+    try {
+      const posts = await getPosts();
+      return posts.data;
+    } catch (error) {
+      console.error('Error fetching blog posts:', error);
+      return [];
+    }
+  }
   
+  function renderBlogPosts(posts) {
+    const blogPostsContainer = document.getElementById('blogPostsContainer');
+  
+    posts.forEach(post => {
+      const postElement = document.createElement('div');
+      postElement.classList.add('blog-post');
+  
+      const titleElement = document.createElement('h2');
+      titleElement.textContent = post.title;
+  
+      const bodyElement = document.createElement('p');
+      bodyElement.textContent = post.body;
+  
+      // Add other post details as needed (tags, media, author, etc.)
+  
+      postElement.appendChild(titleElement);
+      postElement.appendChild(bodyElement);
+      blogPostsContainer.appendChild(postElement);
+    });
+  }
+  
+  async function loadBlogPosts() {
+    const posts = await fetchBlogPosts();
+    renderBlogPosts(posts);
+  }
+  
+  // Call the loadBlogPosts function when the page loads or when needed
+  window.addEventListener('load', loadBlogPosts);
