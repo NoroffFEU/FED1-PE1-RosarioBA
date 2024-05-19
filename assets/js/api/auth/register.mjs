@@ -179,21 +179,24 @@ async function fetchBlogPosts() {
   
   function renderBlogPosts(posts) {
     const blogPostsContainer = document.getElementById('blogPostsContainer');
+    blogPostsContainer.innerHTML = ''; // Clear the container before rendering new posts
   
     posts.forEach(post => {
       const postElement = document.createElement('div');
       postElement.classList.add('blog-post');
   
       const titleElement = document.createElement('h2');
-      titleElement.textContent = post.title;
+      const titleLink = document.createElement('a');
+      titleLink.href = `post/index.html?id=${post.id}`; // Link to post/index.html with post ID
+      titleLink.textContent = post.title;
+      titleElement.appendChild(titleLink);
   
-      const bodyElement = document.createElement('p');
-      bodyElement.textContent = post.body;
-  
-      // Add other post details as needed (tags, media, author, etc.)
+      const imageElement = document.createElement('img');
+      imageElement.src = post.media;
+      imageElement.alt = post.title;
   
       postElement.appendChild(titleElement);
-      postElement.appendChild(bodyElement);
+      postElement.appendChild(imageElement);
       blogPostsContainer.appendChild(postElement);
     });
   }
@@ -205,3 +208,50 @@ async function fetchBlogPosts() {
   
   // Call the loadBlogPosts function when the page loads or when needed
   window.addEventListener('load', loadBlogPosts);
+
+  function getPostIdFromUrl() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('id');
+  }
+
+  
+  
+  function renderSinglePost(post) {
+    const singlePostContainer = document.getElementById('singlePostContainer');
+    singlePostContainer.innerHTML = ''; // Clear the container before rendering the post
+  
+    const titleElement = document.createElement('h1');
+    titleElement.textContent = post.title;
+  
+    const bodyElement = document.createElement('p');
+    bodyElement.textContent = post.body;
+  
+    const imageElement = document.createElement('img');
+    imageElement.src = post.media;
+    imageElement.alt = post.title;
+  
+    // Add other post details as needed (tags, author, etc.)
+  
+    singlePostContainer.appendChild(titleElement);
+    singlePostContainer.appendChild(imageElement);
+    singlePostContainer.appendChild(bodyElement);
+  }
+  
+  async function loadSinglePost() {
+    const postId = getPostIdFromUrl();
+    if (postId) {
+      const post = await fetchSinglePost(postId);
+      if (post) {
+        renderSinglePost(post.data);
+      } else {
+        console.error('Post not found');
+      }
+    }
+  }
+  
+  // Call the loadSinglePost function when the post/index.html page loads
+  window.addEventListener('load', () => {
+    loadBlogPosts();
+    loadSinglePost();
+  });
+
