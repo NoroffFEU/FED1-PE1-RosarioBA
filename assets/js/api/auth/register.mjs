@@ -214,8 +214,26 @@ async function fetchBlogPosts() {
     return urlParams.get('id');
   }
 
-  
-  
+  async function fetchSinglePost(postId) {
+    try {
+    const response = await fetch(`${API_BASE}${API_POSTS_BASE}/${postId}`, {
+        headers: {
+        'Authorization': `Bearer ${load('token')}`,
+        'X-Noroff-API-Key': API_KEY,
+        },
+    });
+
+    if (response.ok) {
+        return await response.json();
+    }
+
+    throw new Error('Failed to fetch post');
+    } catch (error) {
+    console.error('Error fetching post:', error);
+    return null;
+    }
+}
+
   function renderSinglePost(post) {
     const singlePostContainer = document.getElementById('singlePostContainer');
     singlePostContainer.innerHTML = ''; // Clear the container before rendering the post
