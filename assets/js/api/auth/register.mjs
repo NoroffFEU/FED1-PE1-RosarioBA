@@ -213,26 +213,30 @@ async function fetchBlogPosts() {
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get('id');
   }
-
+  
   async function fetchSinglePost(postId) {
     try {
-    const response = await fetch(`${API_BASE}${API_POSTS_BASE}/${postId}`, {
+      const profile = load("profile");
+      if (!profile) {
+        throw new Error("Profile not found. Please log in.");
+      }
+      const response = await fetch(`${API_BASE}${API_POSTS_BASE}/${profile.name}/${postId}`, {
         headers: {
-        'Authorization': `Bearer ${load('token')}`,
-        'X-Noroff-API-Key': API_KEY,
+          'Authorization': `Bearer ${load('token')}`,
+          'X-Noroff-API-Key': API_KEY,
         },
-    });
-
-    if (response.ok) {
+      });
+  
+      if (response.ok) {
         return await response.json();
-    }
-
-    throw new Error('Failed to fetch post');
+      }
+  
+      throw new Error('Failed to fetch post');
     } catch (error) {
-    console.error('Error fetching post:', error);
-    return null;
+      console.error('Error fetching post:', error);
+      return null;
     }
-}
+    }
 
   function renderSinglePost(post) {
     const singlePostContainer = document.getElementById('singlePostContainer');
@@ -272,4 +276,6 @@ async function fetchBlogPosts() {
     loadBlogPosts();
     loadSinglePost();
   });
+  
+
 
