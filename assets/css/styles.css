@@ -191,10 +191,16 @@ h1 {
     max-width: 1000px;
     margin: auto;
 }
+
 .blogpost-list {
     display: grid;
     grid-template-columns: repeat(3, minmax(0,1fr));
     grid-gap: 20px;
+}
+
+#create-post-button-container {
+    display: flex;
+    justify-content: center;
 }
  
 h2 {

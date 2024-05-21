@@ -58,6 +58,7 @@ async function onAuth(event) {
 function setAuthListeners() {
     registerEventListener("register-form", onAuth);
     registerEventListener("login-form", onAuth);
+    registerEventListener("create-post-form", onCreatePost);
 }
 
 function registerEventListener(formId, callback) {
@@ -105,9 +106,6 @@ async function createPost(postData) {
     }
     const createPostURL = `${API_BASE}${API_POSTS_BASE}/${profile.name}`;
 
-    console.log("Creating post with URL:", createPostURL);
-    console.log("Post data:", postData);
-
     const response = await fetch(createPostURL, {
         method: 'POST',
         headers: {
@@ -119,50 +117,53 @@ async function createPost(postData) {
     });
 
     if (!response.ok) {
-        const errorResponse = await response.text(); // Get more details about the error
+        const errorResponse = await response.text();
         console.error("Error response from server:", errorResponse);
         throw new Error(`Failed to create post: ${response.status} ${response.statusText}`);
     }
 
-    return await response.json();
+    const newPost = await response.json();
+    const newPostId = newPost.data.id; // Get the ID of the new post
+    
+    return newPostId; // Return the new post ID
 }
 
-function setCreatePostFormListener() {
-    const form = document.querySelector("#createPost");
+async function onCreatePost(event) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+    const postData = Object.fromEntries(formData.entries());
+    
 
-    if (form) {
-        form.addEventListener("submit", async (event) => {
-            event.preventDefault();
-            const formData = new FormData(form);
-            const postData = Object.fromEntries(formData.entries());
+    const tagsInput = document.getElementById('tags').value;
+    const tags = tagsInput ? tagsInput.split(',').map(tag => tag.trim()) : [];
+    postData.tags = tags;
 
-            const tagsInput = document.getElementById('tags').value;
-            const tags = tagsInput ? tagsInput.split(',').map(tag => tag.trim()) : [];
-            postData.tags = tags; // 
+    postData.media = {
+        url: postData.mediaUrl,
+        alt: postData.mediaAlt,
+    };
 
-            try {
-                const newPost = await createPost(postData);
-                console.log('New post created:', newPost.data);
-                // You can redirect the user or show a success message here
-            } catch (error) {
-                console.error('An error occurred:', error);
-                // Handle any network or other errors
-            }
-        });
+    delete postData.mediaUrl;
+    delete postData.mediaAlt;
+
+    try {
+        const newPostId = await createPost(postData);
+        console.log('New post created with ID:', newPostId);
+
+        // Redirect to the single post page
+        window.location.href = `/post/index.html?id=${newPostId}`;
+    } catch (error) {
+        console.error('An error occurred:', error);
+        // Handle any network or other errors
     }
 }
-
+/*
 document.addEventListener("DOMContentLoaded", () => {
-    if (document.getElementById("register-form")) {
-        setAuthListener();
-    }
-
-    if (document.getElementById("createPost")) {
-        setCreatePostFormListener();
-    }
-
-    console.log("Event listeners are set");
+    setAuthListeners();
 });
+ */
+
 
 export { createPost };
 
@@ -252,8 +253,8 @@ function getPostIdFromUrl() {
     bodyElement.textContent = post.body;
   
     const imageElement = document.createElement('img');
-    imageElement.src = post.media;
-    imageElement.alt = post.title;
+    imageElement.src = post.media.url; 
+    imageElement.alt = post.media.alt;
   
     // Add other post details as needed (tags, author, etc.)
   
@@ -298,6 +299,19 @@ function loadUserProfile() {
     }
     return profile != null;
   }
+  
+  async function addCreatePostButton() {
+    const profileElement = document.getElementById('create-post-button-container');
+    if (!profileElement) return;
+
+    const createPostButton = document.createElement('button');
+    createPostButton.textContent = 'Create Post';
+    createPostButton.addEventListener('click', () => {
+        window.location.href = 'post/createpost.html';
+    });
+    profileElement.appendChild(createPostButton);
+  }
+
   async function loadLoginRegisterLinks() {
     const loginRegisterLinks = document.getElementById('login-register-links-container');
     loginRegisterLinks.innerHTML = ''; // Clear the container before rendering the links
@@ -322,6 +336,7 @@ function loadUserProfile() {
     if (loggedIn) {
         const blogPostsContainer = document.getElementById('blogPostsContainer');
         if (blogPostsContainer) {
+            addCreatePostButton();
             loadBlogPosts();
         }
         if (window.location.pathname.includes('/post/')) {   
