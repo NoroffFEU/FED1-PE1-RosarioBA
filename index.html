@@ -27,6 +27,20 @@
         <div id="user-profile"></div>
     </header>
     <main>
+        <!-- let the user select the name of the blog author -->
+        <form id="author-select-form">
+            <label for="author-select">Select an author:</label>
+            <!-- free form-->
+            <input type="text" id="author-select" name="author-free">
+            <!-- fixed list of authors -->
+            <select id="author-select" name="author">
+                <option value="">Select an author</option>
+                <option value="rosarioaz">Rosario AZ</option>
+                <option value="rosarionew">Rosario New</option>
+            </select>
+            <button type="submit">Select</button>
+        </form>
+
         <section aria-label="HotView Labs newest blogposts">
             <div class="carousel" data-carousel>
               <button class="carousel-button prev" data-carousel-button="prev"></button>

@@ -59,6 +59,7 @@ function setAuthListeners() {
     registerEventListener("register-form", onAuth);
     registerEventListener("login-form", onAuth);
     registerEventListener("create-post-form", onCreatePost);
+    registerEventListener("author-select-form", onSelectAuthor);
 }
 
 function registerEventListener(formId, callback) {
@@ -80,12 +81,11 @@ function load(key) {
     return JSON.parse(localStorage.getItem(key));
 }
 
-async function getPosts() {
-    const profile = load("profile");
-    if (!profile) {
-        throw new Error("Profile not found. Please log in.");
+async function getPosts(profileName) {
+    if (!profileName) {
+        throw new Error("ProfileName missing.");
     }
-    const response = await fetch(`${API_BASE}${API_POSTS_BASE}/${profile.name}`, {
+    const response = await fetch(`${API_BASE}${API_POSTS_BASE}/${profileName}`, {
         headers: {
             Authorization: `Bearer ${load("token")}`,
             "X-Noroff-API-Key": API_KEY,
@@ -167,9 +167,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 export { createPost };
 
-async function fetchBlogPosts() {
+async function fetchBlogPosts(profileName) {
     try {
-        const posts = await getPosts();
+        const posts = await getPosts(profileName);
         return posts.data;
       } catch (error) {
         console.error('Error fetching blog posts:', error);
@@ -208,8 +208,8 @@ async function fetchBlogPosts() {
     });
   }
   
-  async function loadBlogPosts() {
-    const posts = await fetchBlogPosts();
+  async function loadBlogPosts(profileName) {
+    const posts = await fetchBlogPosts(profileName);
     renderBlogPosts(posts);
 }
 
@@ -297,7 +297,7 @@ function loadUserProfile() {
             logoutButton.addEventListener('click', onLogout);
         }
     }
-    return profile != null;
+    return profile;
   }
   
   async function addCreatePostButton() {
@@ -311,6 +311,29 @@ function loadUserProfile() {
     });
     profileElement.appendChild(createPostButton);
   }
+
+async function hideAuthorSelectionForm() {
+    const authorSelectionForm = document.getElementById('author-select-form');
+    if (authorSelectionForm) {
+        authorSelectionForm.style.display = 'none';
+    }
+}
+
+async function showAuthorSelectionForm() {
+    const authorSelectionForm = document.getElementById('author-select-form');
+    if (authorSelectionForm) {
+        authorSelectionForm.style.display = 'block';
+    }
+}
+
+async function onSelectAuthor(event) {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const authorFree = formData.get('author-free');
+    const authorSelected = formData.get('author');
+
+    loadBlogPosts(authorFree || authorSelected);
+}
 
   async function loadLoginRegisterLinks() {
     const loginRegisterLinks = document.getElementById('login-register-links-container');
@@ -331,18 +354,20 @@ function loadUserProfile() {
   // Call the loadSinglePost function when the post/index.html page loads
   window.addEventListener('load', () => {
     setAuthListeners();
-    const loggedIn = loadUserProfile();
-    console.log('Logged in:', loggedIn);
-    if (loggedIn) {
+    const loggedInProfile = loadUserProfile();
+    console.log('Logged in profile:', loggedInProfile);
+    if (loggedInProfile) {
+        hideAuthorSelectionForm();
         const blogPostsContainer = document.getElementById('blogPostsContainer');
         if (blogPostsContainer) {
             addCreatePostButton();
-            loadBlogPosts();
+            loadBlogPosts(loggedInProfile.name);
         }
         if (window.location.pathname.includes('/post/')) {   
             loadSinglePost();
         }
     } else {
+        showAuthorSelectionForm();
         loadLoginRegisterLinks()
     }
   });
