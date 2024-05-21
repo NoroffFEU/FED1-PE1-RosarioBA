@@ -46,26 +46,25 @@ async function onAuth(event) {
     const email = event.target.email.value;
     const password = event.target.password.value;
 
-    if (event.submitter.innerText.toLowerCase() === "login") {
+    if (event.srcElement.id === "login-form") {
         await login(email, password);
     } else {
         await register(name, email, password);
         await login(email, password);
     }
-
-    const posts = await getPosts();
-    console.log(posts);
+    window.location.href = "/"; // Redirect to the home page
 }
 
-function setAuthListener() {
+function setAuthListeners() {
     registerEventListener("register-form", onAuth);
+    registerEventListener("login-form", onAuth);
 }
 
 function registerEventListener(formId, callback) {
     const form = document.getElementById(formId);
 
     if (!form) {
-        console.error(`Form with id ${formId} not found`);
+        console.log(`Form with id ${formId} not found`);
         return;
     }
 
@@ -270,11 +269,52 @@ async function fetchBlogPosts() {
       }
     }
   }
+
+
+  async function onLogout(event) {
+    event.preventDefault();
+    localStorage.clear();
+    console.log("logged out");
+    // refresh the page
+    window.location.reload();
+} 
+
+// return true if logged in
+function loadUserProfile() {
+    const profileElement = document.getElementById('user-profile');
   
+    const profile = load('profile');
+    if (profile) {
+        profileElement.textContent = `Logged in as: ${profile.name}`;
+        profileElement.insertAdjacentHTML('beforeend', '<button id="logout">Logout</button>');
+        const logoutButton = document.getElementById('logout');
+        if (logoutButton) {
+            logoutButton.addEventListener('click', onLogout);
+        }
+    }
+    return profile != null;
+  }
+  async function loadLoginRegisterLinks() {
+    const loginRegisterLinks = document.getElementById('login-register-links-container');
+    loginRegisterLinks.innerHTML = ''; // Clear the container before rendering the links
+  
+    const loginLink = document.createElement('a');
+    loginLink.href = 'account/login.html';
+    loginLink.textContent = 'Login';
+  
+    const registerLink = document.createElement('a');
+    registerLink.href = 'account/register.html';
+    registerLink.textContent = 'Register';
+  
+    loginRegisterLinks.appendChild(loginLink);
+    loginRegisterLinks.appendChild(registerLink);
+  }
+
   // Call the loadSinglePost function when the post/index.html page loads
   window.addEventListener('load', () => {
     loadBlogPosts();
     loadSinglePost();
+    setAuthListeners();
   });
   
 
