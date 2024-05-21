@@ -168,12 +168,12 @@ export { createPost };
 
 async function fetchBlogPosts() {
     try {
-      const posts = await getPosts();
-      return posts.data;
-    } catch (error) {
-      console.error('Error fetching blog posts:', error);
-      return [];
-    }
+        const posts = await getPosts();
+        return posts.data;
+      } catch (error) {
+        console.error('Error fetching blog posts:', error);
+        return [];
+      }
   }
   
   function renderBlogPosts(posts) {
@@ -189,13 +189,20 @@ async function fetchBlogPosts() {
       titleLink.href = `post/index.html?id=${post.id}`; // Link to post/index.html with post ID
       titleLink.textContent = post.title;
       titleElement.appendChild(titleLink);
-  
+
+
       const imageElement = document.createElement('img');
-      imageElement.src = post.media;
+      if (post.media) {
+        imageElement.src = post.media;
+      } else {
+        imageElement.src = 'https://via.placeholder.com/300';
+      }
       imageElement.alt = post.title;
-  
+
+
       postElement.appendChild(titleElement);
       postElement.appendChild(imageElement);
+
       blogPostsContainer.appendChild(postElement);
     });
   }
@@ -203,16 +210,13 @@ async function fetchBlogPosts() {
   async function loadBlogPosts() {
     const posts = await fetchBlogPosts();
     renderBlogPosts(posts);
-  }
-  
-  // Call the loadBlogPosts function when the page loads or when needed
-  window.addEventListener('load', loadBlogPosts);
+}
 
-  function getPostIdFromUrl() {
+function getPostIdFromUrl() {
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get('id');
   }
-  
+
   async function fetchSinglePost(postId) {
     try {
       const profile = load("profile");
@@ -225,17 +229,17 @@ async function fetchBlogPosts() {
           'X-Noroff-API-Key': API_KEY,
         },
       });
-  
+
       if (response.ok) {
         return await response.json();
       }
-  
+
       throw new Error('Failed to fetch post');
     } catch (error) {
       console.error('Error fetching post:', error);
       return null;
     }
-    }
+}
 
   function renderSinglePost(post) {
     const singlePostContainer = document.getElementById('singlePostContainer');
@@ -312,9 +316,20 @@ function loadUserProfile() {
 
   // Call the loadSinglePost function when the post/index.html page loads
   window.addEventListener('load', () => {
-    loadBlogPosts();
-    loadSinglePost();
     setAuthListeners();
+    const loggedIn = loadUserProfile();
+    console.log('Logged in:', loggedIn);
+    if (loggedIn) {
+        const blogPostsContainer = document.getElementById('blogPostsContainer');
+        if (blogPostsContainer) {
+            loadBlogPosts();
+        }
+        if (window.location.pathname.includes('/post/')) {   
+            loadSinglePost();
+        }
+    } else {
+        loadLoginRegisterLinks()
+    }
   });
   
 
