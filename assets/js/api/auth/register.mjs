@@ -176,32 +176,11 @@ async function fetchBlogPosts(profileName) {
         return [];
       }
   }
-  
-  function renderBlogPosts(posts) {
-    const blogPostsContainer = document.getElementById('blogPostsContainer');
-    blogPostsContainer.innerHTML = ''; // Clear the container before rendering new posts
-  
-    posts.forEach(post => {
-      const postElement = document.createElement('div');
-      postElement.classList.add('blog-post');
-  
-      const titleElement = document.createElement('h2');
-      const titleLink = document.createElement('a');
-      titleLink.href = `post/index.html?id=${post.id}`; // Link to post/index.html with post ID
-      titleLink.textContent = post.title;
-      titleElement.appendChild(titleLink);
 
     function renderBlogPosts(posts) {
   const blogPostsContainer = document.getElementById('blogPostsContainer');
   blogPostsContainer.innerHTML = ''; // Clear the container before rendering new posts
 
-      const imageElement = document.createElement('img');
-      if (post.media) {
-        imageElement.src = post.media;
-      } else {
-        imageElement.src = 'https://via.placeholder.com/300';
-      }
-      imageElement.alt = post.title;
   posts.forEach(post => {
     const postElement = document.createElement('div');
     postElement.classList.add('blog-post');
@@ -215,19 +194,29 @@ async function fetchBlogPosts(profileName) {
     imageElement.alt = post.title;
     postElement.appendChild(imageElement);
 
-      postElement.appendChild(titleElement);
-      postElement.appendChild(imageElement);
     const contentElement = document.createElement('div');
     contentElement.classList.add('blog-post-content');
 
-      blogPostsContainer.appendChild(postElement);
-    });
-  }
-  
-  async function loadBlogPosts(profileName) {
-    const posts = await fetchBlogPosts(profileName);
-    renderBlogPosts(posts);
+    const titleElement = document.createElement('h2');
+    const titleLink = document.createElement('a');
+    titleLink.href = `post/index.html?id=${post.id}`;
+    titleLink.textContent = post.title;
+    titleElement.appendChild(titleLink);
+    contentElement.appendChild(titleElement);
+
+    postElement.appendChild(contentElement);
+    blogPostsContainer.appendChild(postElement);
+  });
 }
+  
+    async function loadBlogPosts(profileName) {
+    const posts = await fetchBlogPosts(profileName);
+    posts.sort((a, b) => new Date(b.created) - new Date(a.created)); // Sort posts by creation date in descending order
+    renderBlogPosts(posts);
+    renderCarouselPosts(posts.slice(0, 3)); // Pass the three latest posts to renderCarouselPosts
+  }
+
+
 
 function getPostIdFromUrl() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -291,6 +280,74 @@ function getPostIdFromUrl() {
     }
   }
 
+  const buttons = document.querySelectorAll("[data-carousel-button]");
+
+buttons.forEach(button => {
+  button.addEventListener("click", () => {
+    const offset = button.dataset.carouselButton === "next" ? 1 : -1;
+    const slides = button.closest("[data-carousel]").querySelector("[data-slides]");
+    const activeSlide = slides.querySelector("[data-active]");
+    const indicators = button.closest("[data-carousel]").querySelectorAll(".carousel-indicator");
+    let newIndex = [...slides.children].indexOf(activeSlide) + offset;
+    
+    if (newIndex < 0) {
+      newIndex = slides.children.length - 1;
+    } else if (newIndex >= slides.children.length) {
+      newIndex = 0;
+    }
+
+    // Remove active attribute from the previous slide and indicator
+    delete activeSlide.dataset.active;
+    indicators.forEach(indicator => indicator.classList.remove("active"));
+
+    // Set active attribute to the new slide and indicator
+    slides.children[newIndex].dataset.active = true;
+    indicators[newIndex].classList.add("active");
+  });
+});
+
+
+function renderCarouselPosts(posts) {
+    const carouselSlides = document.querySelector("[data-slides]");
+    const carouselIndicators = document.querySelector("[data-carousel-indicators]");
+    carouselSlides.innerHTML = ""; // Clear the carousel slides
+    carouselIndicators.innerHTML = ""; // Clear the carousel indicators
+  
+    posts.forEach((post, index) => {
+      const slideElement = document.createElement("li");
+      slideElement.classList.add("slide");
+      if (index === 0) {
+        slideElement.dataset.active = true; // Set the first slide as active
+      }
+  
+      const imageElement = document.createElement("img");
+      if (post.media && post.media.url) {
+        imageElement.src = post.media.url;
+      } else {
+        imageElement.src = "https://via.placeholder.com/300";
+      }
+      imageElement.alt = post.title;
+      slideElement.appendChild(imageElement);
+  
+      carouselSlides.appendChild(slideElement);
+  
+      // Create indicators
+      const indicatorElement = document.createElement("button");
+      indicatorElement.classList.add("carousel-indicator");
+      if (index === 0) {
+        indicatorElement.classList.add("active");
+      }
+      indicatorElement.addEventListener("click", () => {
+        carouselSlides.querySelector("[data-active]").removeAttribute("data-active");
+        slideElement.dataset.active = true;
+        carouselIndicators.querySelectorAll(".active").forEach(indicator => {
+          indicator.classList.remove("active");
+        });
+        indicatorElement.classList.add("active");
+      });
+      carouselIndicators.appendChild(indicatorElement);
+    });
+  }
 
   async function onLogout(event) {
     event.preventDefault();
