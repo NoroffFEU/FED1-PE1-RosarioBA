@@ -260,12 +260,21 @@ function getPostIdFromUrl() {
     const imageElement = document.createElement('img');
     imageElement.src = post.media.url; 
     imageElement.alt = post.media.alt;
+
+    const authorElement = document.createElement('p');
+    authorElement.textContent = `Author: ${post.author}`;
+    
+    const publishDateElement = document.createElement('p');
+    publishDateElement.textContent = `Published: ${new Date(post.published).toLocaleString()}`;
+
   
     // Add other post details as needed (tags, author, etc.)
   
     singlePostContainer.appendChild(titleElement);
     singlePostContainer.appendChild(imageElement);
     singlePostContainer.appendChild(bodyElement);
+    singlePostContainer.appendChild(authorElement);
+    singlePostContainer.appendChild(publishDateElement);
   }
   
   async function loadSinglePost() {
