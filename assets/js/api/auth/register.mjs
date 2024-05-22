@@ -267,6 +267,12 @@ function getPostIdFromUrl() {
     const publishDateElement = document.createElement('p');
     publishDateElement.textContent = `Published: ${new Date(post.published).toLocaleString()}`;
 
+    const deleteButton = document.createElement('button');
+    deleteButton.textContent = 'Delete Post';
+    deleteButton.addEventListener('click', () => {
+        deletePost(post.id);
+    });
+
   
     // Add other post details as needed (tags, author, etc.)
   
@@ -275,6 +281,7 @@ function getPostIdFromUrl() {
     singlePostContainer.appendChild(bodyElement);
     singlePostContainer.appendChild(authorElement);
     singlePostContainer.appendChild(publishDateElement);
+    singlePostContainer.appendChild(deleteButton);
   }
   
   async function loadSinglePost() {
@@ -288,41 +295,62 @@ function getPostIdFromUrl() {
       }
     }
   }
+  
+  async function deletePost(postId) {
+    try {
+      const profile = load("profile");
+      if (!profile) {
+        throw new Error("Profile not found. Please log in.");
+      }
+      const response = await fetch(`${API_BASE}${API_POSTS_BASE}/${profile.name}/${postId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${load('token')}`,
+          'X-Noroff-API-Key': API_KEY,
+        },
+      });
+  
+      if (response.ok) {
+        console.log('Post deleted successfully');
+        // Redirect to the appropriate page after successful deletion
+        window.location.href = '/index.html';
+      } else {
+        console.error('Failed to delete post:', response.status);
+        // Handle the error scenario, e.g., display an error message to the user
+      }
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      // Handle any network or other errors
+    }
+  }
 
   const buttons = document.querySelectorAll("[data-carousel-button]");
 
-  buttons.forEach(button => {
-    button.addEventListener("click", () => {
-      const offset = button.dataset.carouselButton === "next" ? 1 : -1;
-      const slides = button.closest("[data-carousel]").querySelector("[data-slides]");
-      const activeSlide = slides.querySelector("[data-active]");
-      const indicators = button.closest("[data-carousel]").querySelectorAll(".carousel-indicator");
-  
-      // Find the index of the current active slide
-      let newIndex = [...slides.children].indexOf(activeSlide) + offset;
-      
-      // Loop back if the new index is out of bounds
-      if (newIndex < 0) {
-        newIndex = slides.children.length - 1;
-      } else if (newIndex >= slides.children.length) {
-        newIndex = 0;
-      }
-  
-      // Remove active attribute from the current active slide
-      activeSlide.removeAttribute("data-active");
-      // Set active attribute to the new slide
-      slides.children[newIndex].setAttribute("data-active", "true");
-  
-      // Update the indicators
-      indicators.forEach((indicator, index) => {
-        if (index === newIndex) {
-          indicator.classList.add("active");
-        } else {
-          indicator.classList.remove("active");
-        }
-      });
-    });
+buttons.forEach(button => {
+  button.addEventListener("click", () => {
+    const offset = button.dataset.carouselButton === "next" ? 1 : -1;
+    const slides = button.closest("[data-carousel]").querySelector("[data-slides]");
+    const activeSlide = slides.querySelector("[data-active]");
+    const indicators = button.closest("[data-carousel]").querySelectorAll(".carousel-indicator");
+    let newIndex = [...slides.children].indexOf(activeSlide) + offset;
+    
+    if (newIndex < 0) {
+      newIndex = slides.children.length - 1;
+    } else if (newIndex >= slides.children.length) {
+      newIndex = 0;
+    }
+
+    // Remove active attribute from the previous slide and indicator
+    delete activeSlide.dataset.active;
+    indicators.forEach(indicator => indicator.classList.remove("active"));
+
+    // Set active attribute to the new slide and indicator
+    slides.children[newIndex].dataset.active = true;
+    indicators[newIndex].classList.add("active");
   });
+});
+
+
 function renderCarouselPosts(posts) {
     const carouselSlides = document.querySelector("[data-slides]");
     const carouselIndicators = document.querySelector("[data-carousel-indicators]");
@@ -439,6 +467,8 @@ async function onSelectAuthor(event) {
     loginRegisterLinks.appendChild(loginLink);
     loginRegisterLinks.appendChild(registerLink);
   }
+
+  
 
   // Call the loadSinglePost function when the post/index.html page loads
   window.addEventListener('load', () => {
