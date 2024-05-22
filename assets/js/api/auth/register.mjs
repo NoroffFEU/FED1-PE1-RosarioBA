@@ -191,6 +191,9 @@ async function fetchBlogPosts(profileName) {
       titleLink.textContent = post.title;
       titleElement.appendChild(titleLink);
 
+    function renderBlogPosts(posts) {
+  const blogPostsContainer = document.getElementById('blogPostsContainer');
+  blogPostsContainer.innerHTML = ''; // Clear the container before rendering new posts
 
       const imageElement = document.createElement('img');
       if (post.media) {
@@ -199,10 +202,23 @@ async function fetchBlogPosts(profileName) {
         imageElement.src = 'https://via.placeholder.com/300';
       }
       imageElement.alt = post.title;
+  posts.forEach(post => {
+    const postElement = document.createElement('div');
+    postElement.classList.add('blog-post');
 
+    const imageElement = document.createElement('img');
+    if (post.media && post.media.url) {
+      imageElement.src = post.media.url;
+    } else {
+      imageElement.src = 'https://via.placeholder.com/300';
+    }
+    imageElement.alt = post.title;
+    postElement.appendChild(imageElement);
 
       postElement.appendChild(titleElement);
       postElement.appendChild(imageElement);
+    const contentElement = document.createElement('div');
+    contentElement.classList.add('blog-post-content');
 
       blogPostsContainer.appendChild(postElement);
     });
