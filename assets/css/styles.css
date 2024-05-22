@@ -178,11 +178,11 @@ h1 {
 }
 
 .carousel .carousel-button.prev {
-  left: 0;
+  right: 0;
 }
 
 .carousel .carousel-button.next {
-  right: 0;
+  left: 0;
 }
 
 .carousel-indicators {
@@ -226,7 +226,8 @@ h1 {
 
 #create-post-button-container {
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
+    padding-bottom: 10px;
 }
  
 h2 {
