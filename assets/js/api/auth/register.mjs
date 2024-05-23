@@ -60,6 +60,7 @@ function setAuthListeners() {
     registerEventListener("login-form", onAuth);
     registerEventListener("create-post-form", onCreatePost);
     registerEventListener("author-select-form", onSelectAuthor);
+
 }
 
 function registerEventListener(formId, callback) {
@@ -247,7 +248,30 @@ function getPostIdFromUrl() {
     }
 }
 
-  function renderSinglePost(post) {
+export async function updatePost(postId, updatedPost) {
+  const profile = load("profile");
+  if (!profile) {
+    throw new Error("Profile not found. Please log in.");
+  }
+  const response = await fetch(`${API_BASE}${API_POSTS_BASE}/${profile.name}/${postId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${load('token')}`,
+      'X-Noroff-API-Key': API_KEY,
+    },
+    body: JSON.stringify(updatedPost),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to update post');
+  }
+ 
+  return await response.json();
+}
+
+
+  export function renderSinglePost(post) {
     const singlePostContainer = document.getElementById('singlePostContainer');
     singlePostContainer.innerHTML = ''; // Clear the container before rendering the post
   
@@ -273,7 +297,17 @@ function getPostIdFromUrl() {
         deletePost(post.id);
     });
 
-  
+  const profile = load("profile");
+  if (profile && profile.name === post.author.name) {
+    const editButton = document.createElement('button');
+    editButton.textContent = 'Edit Post';
+    editButton.addEventListener('click', () => {
+      window.location.href = `/post/edit.html?id=${post.id}`;
+    });
+    singlePostContainer.appendChild(editButton);
+  }
+
+
     // Add other post details as needed (tags, author, etc.)
   
     singlePostContainer.appendChild(titleElement);
@@ -282,18 +316,6 @@ function getPostIdFromUrl() {
     singlePostContainer.appendChild(authorElement);
     singlePostContainer.appendChild(publishDateElement);
     singlePostContainer.appendChild(deleteButton);
-  }
-  
-  async function loadSinglePost() {
-    const postId = getPostIdFromUrl();
-    if (postId) {
-      const post = await fetchSinglePost(postId);
-      if (post) {
-        renderSinglePost(post.data);
-      } else {
-        console.error('Post not found');
-      }
-    }
   }
   
   async function deletePost(postId) {
@@ -324,6 +346,99 @@ function getPostIdFromUrl() {
     }
   }
 
+  async function onUpdatePost(event) {
+    event.preventDefault();
+    const postId = getPostIdFromUrl();
+    if (postId) {
+      const formData = new FormData(event.target);
+      const updatedPost = Object.fromEntries(formData.entries());
+      updatedPost.tags = updatedPost.tags.split(',').map(tag => tag.trim());
+      updatedPost.media = {
+        url: updatedPost.mediaUrl,
+        alt: updatedPost.mediaAlt,
+      };
+      delete updatedPost.mediaUrl;
+      delete updatedPost.mediaAlt;
+  
+      try {
+        const updatedPostData = await updatePost(postId, updatedPost);
+        console.log('Updated post:', updatedPostData);
+        window.location.href = `/post/index.html?id=${postId}`;
+      } catch (error) {
+        console.error('Error updating post:', error);
+      }
+    }
+  }
+  
+  export async function populateEditForm() {
+    const postId = getPostIdFromUrl();
+    if (postId) {
+      const post = await fetchSinglePost(postId);
+      if (post) {
+        document.getElementById('title').value = post.data.title;
+        document.getElementById('body').value = post.data.body;
+        if (post.data.tags) {
+          document.getElementById('tags').value = post.data.tags.join(', ');
+        }
+        if (post.data.media && post.data.media.url) {
+          document.getElementById('mediaUrl').value = post.data.media.url;
+          document.getElementById('mediaAlt').value = post.data.media.alt || '';
+        }
+      }
+    }
+  }
+  
+  export function setupEditForm() {
+    document.getElementById("edit-post-form").addEventListener("submit", async (event) => {
+      event.preventDefault();
+  
+      const postId = getPostIdFromUrl();
+      const title = document.getElementById("title").value.trim();
+      const body = document.getElementById("body").value.trim();
+      const tags = document.getElementById("tags").value.split(',').map(tag => tag.trim());
+      const mediaUrl = document.getElementById("mediaUrl").value.trim();
+      const mediaAlt = document.getElementById("mediaAlt").value.trim();
+  
+      if (!title || !body || !mediaUrl) {
+        alert("Title, Body, and Media URL are required.");
+        return;
+      }
+  
+      const updatedPost = {
+        title,
+        body,
+        tags,
+        media: {
+          url: mediaUrl,
+          alt: mediaAlt,
+        },
+      };
+  
+      try {
+        const updatedPostData = await updatePost(postId, updatedPost);
+        console.log("Post updated successfully:", updatedPostData);
+        alert("Post updated successfully!");
+        window.location.href = `/post/index.html?id=${postId}`;
+      } catch (error) {
+        console.error(error);
+        alert("Failed to update post. Please try again.");
+      }
+    });
+  }
+  
+  async function loadSinglePost() {
+    const postId = getPostIdFromUrl();
+    if (postId) {
+      const post = await fetchSinglePost(postId);
+      if (post) {
+        console.log('Post data:', post.data);
+        renderSinglePost(post.data);
+      } else {
+        console.error('Post not found');
+      }
+    }
+  }
+  
   const buttons = document.querySelectorAll("[data-carousel-button]");
 
 buttons.forEach(button => {
@@ -468,7 +583,7 @@ async function onSelectAuthor(event) {
     loginRegisterLinks.appendChild(registerLink);
   }
 
-  
+
 
   // Call the loadSinglePost function when the post/index.html page loads
   window.addEventListener('load', () => {
@@ -488,8 +603,14 @@ async function onSelectAuthor(event) {
     } else {
         showAuthorSelectionForm();
         loadLoginRegisterLinks()
-    }
-  });
+    
+      }
+      
+      if (window.location.pathname.includes('/post/edit.html')) {
+        populateEditForm();
+        document.getElementById('edit-post-form').addEventListener('submit', onUpdatePost);
+      }
+    });
   
 
 
