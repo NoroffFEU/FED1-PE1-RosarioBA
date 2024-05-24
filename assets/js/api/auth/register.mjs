@@ -159,12 +159,6 @@ async function onCreatePost(event) {
         // Handle any network or other errors
     }
 }
-/*
-document.addEventListener("DOMContentLoaded", () => {
-    setAuthListeners();
-});
- */
-
 
 export { createPost };
 
@@ -286,10 +280,10 @@ export async function updatePost(postId, updatedPost) {
     imageElement.alt = post.media.alt;
 
     const authorElement = document.createElement('p');
-    authorElement.textContent = `Author: ${post.author}`;
+    authorElement.textContent = `Author: ${post.author.name}`;
     
     const publishDateElement = document.createElement('p');
-    publishDateElement.textContent = `Published: ${new Date(post.published).toLocaleString()}`;
+    publishDateElement.textContent = `Published: ${new Date(post.created).toLocaleString()}`;
 
     const deleteButton = document.createElement('button');
     deleteButton.textContent = 'Delete Post';
@@ -311,10 +305,10 @@ export async function updatePost(postId, updatedPost) {
     // Add other post details as needed (tags, author, etc.)
   
     singlePostContainer.appendChild(titleElement);
-    singlePostContainer.appendChild(imageElement);
-    singlePostContainer.appendChild(bodyElement);
     singlePostContainer.appendChild(authorElement);
     singlePostContainer.appendChild(publishDateElement);
+    singlePostContainer.appendChild(imageElement);
+    singlePostContainer.appendChild(bodyElement);
     singlePostContainer.appendChild(deleteButton);
   }
   
@@ -523,7 +517,7 @@ function loadUserProfile() {
     const profile = load('profile');
     if (profile) {
         profileElement.textContent = `Logged in as: ${profile.name}`;
-        profileElement.insertAdjacentHTML('beforeend', '<button id="logout">Logout</button>');
+        profileElement.insertAdjacentHTML('beforeend', '<div> <button id="logout">Logout</button> </div>');
         const logoutButton = document.getElementById('logout');
         if (logoutButton) {
             logoutButton.addEventListener('click', onLogout);
@@ -582,6 +576,8 @@ async function onSelectAuthor(event) {
     loginRegisterLinks.appendChild(loginLink);
     loginRegisterLinks.appendChild(registerLink);
   }
+
+
 
 
 

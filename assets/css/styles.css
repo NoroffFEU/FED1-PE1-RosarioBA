@@ -6,15 +6,21 @@
   @font-face {
     font-family: 'Lora';
     src: url('../font/Lora-Regular.ttf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
   }
 
   @font-face {
     font-family: 'Lora';
     src: url('../font/Lora-Bold.ttf') format('opentype');
+    font-weight: bold;
+    font-style: normal;
   }
   
  a, p, h1, h2, h3 {
     font-family: 'Lora', serif;
+    font-weight: bold;
+    color: rgba(33, 75, 110, 1);
 }
 
 body {
@@ -122,7 +128,14 @@ button {
   float: right;
 }
 
-/*carousel*/
+  #user-profile button{
+    float: none;
+
+  }
+
+
+
+/*mainpage*/
 
 h1 {
     font-size: 1.2rem;
@@ -210,6 +223,15 @@ h1 {
 .carousel-indicator.active {
   background-color: rgba(255, 255, 255, 0.9);
 }
+
+.blog-post-content {
+  text-align: left;
+  
+}
+
+.blog-post-content h2 {
+  padding: 10px;
+}
   
   /*Thumbnail Grid*/
 
@@ -238,7 +260,7 @@ h2 {
 
 /*blogpost*/
 .blogpost-section {
-    max-width: 800px;
+    max-width: 750px;
     margin: auto;
     text-align: left;
     line-height: 1.5;
@@ -249,6 +271,7 @@ img {
   width: 300px;
   height: 300px;
   object-fit: cover;
+  border-radius: 5px;
 }
 
 .blog-post {
@@ -258,10 +281,13 @@ img {
   margin-bottom: 20px;
 }
 
-
-.blog-post-content {
-  text-align: center;
+#singlePostContainer p {
+  font-family: 'Lora', serif;
+  color: black;
+  font-weight: normal;
+  font-size: 0.9em;
 }
+
 
 /*login*/
 input, 
