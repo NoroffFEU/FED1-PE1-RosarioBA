@@ -516,7 +516,6 @@ buttons.forEach(button => {
 
   });
 
-function renderCarouselPosts(posts) {
   function renderCarouselPosts(posts) {
     const carouselSlides = document.querySelector("[data-slides]");
     const carouselIndicators = document.querySelector("[data-carousel-indicators]");
