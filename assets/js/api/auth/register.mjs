@@ -587,49 +587,49 @@ async function onSelectAuthor(event) {
 
 // Login/Register Links Functions
 
-  async function loadLoginRegisterLinks() {
-    const loginRegisterLinks = document.getElementById('login-register-links-container');
-    if (!loginRegisterLinks) return;
-    loginRegisterLinks.innerHTML = ''; // Clear the container before rendering the links
-  
-    const loginLink = document.createElement('a');
-    loginLink.href = 'account/login.html';
-    loginLink.textContent = 'Login';
-  
-    const registerLink = document.createElement('a');
-    registerLink.href = 'account/register.html';
-    registerLink.textContent = 'Register';
-  
-    loginRegisterLinks.appendChild(loginLink);
-    loginRegisterLinks.appendChild(registerLink);
-  }
+async function loadLoginRegisterLinks() {
+  const loginRegisterLinks = document.getElementById('login-register-links-container');
+  if (!loginRegisterLinks) return;
+  loginRegisterLinks.innerHTML = ''; // Clear the container before rendering the links
 
-  // Event Listeners
-  window.addEventListener('load', () => {
-    setAuthListeners();
-    const loggedInProfile = loadUserProfile();
-    console.log('Logged in profile:', loggedInProfile);
-    if (loggedInProfile) {
-        hideAuthorSelectionForm();
-        const blogPostsContainer = document.getElementById('blogPostsContainer');
-        if (blogPostsContainer) {
-            addCreatePostButton();
-            loadBlogPosts(loggedInProfile.name);
-        }
-        if (window.location.pathname.includes('/post/')) {   
-            loadSinglePost();
-        }
-    } else {
-        showAuthorSelectionForm();
-        loadLoginRegisterLinks()
+  const loginLink = document.createElement('a');
+  loginLink.href = 'account/login.html';
+  loginLink.textContent = 'Login';
+
+  const registerLink = document.createElement('a');
+  registerLink.href = 'account/register.html';
+  registerLink.textContent = 'Register';
+
+  loginRegisterLinks.appendChild(loginLink);
+  loginRegisterLinks.appendChild(registerLink);
+}
+
+// Event Listeners
+window.addEventListener('load', () => {
+  setAuthListeners();
+  setupCarousel();
+  const loggedInProfile = loadUserProfile();
+  console.log('Logged in profile:', loggedInProfile);
+  if (loggedInProfile) {
+      hideAuthorSelectionForm();
+      const blogPostsContainer = document.getElementById('blogPostsContainer');
+      if (blogPostsContainer) {
+          addCreatePostButton();
+          loadBlogPosts(loggedInProfile.name);
+      }
+      if (window.location.pathname.includes('/post/index.html')) {   
+          loadSinglePost();
+      }
+  } else {
+      showAuthorSelectionForm();
+      loadLoginRegisterLinks()
+    }
     
-      }
-      
-      if (window.location.pathname.includes('/post/edit.html')) {
-        populateEditForm();
-        document.getElementById('edit-post-form').addEventListener('submit', onUpdatePost);
-      }
-    });
+    if (window.location.pathname.includes('/post/edit.html')) {
+      populateEditForm();
+      document.getElementById('edit-post-form').addEventListener('submit', onUpdatePost);
+    }
+  });
   
 
 
