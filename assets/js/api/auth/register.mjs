@@ -1,9 +1,21 @@
+//constants for the API
 const API_KEY = "cf7dc630-134f-4432-8cca-cc389127181";
 const API_BASE = "https://v2.api.noroff.dev";
 const API_AUTH = "/auth";
 const API_REGISTER = "/register";
 const API_LOGIN = "/login";
 const API_POSTS_BASE = "/blog/posts";
+
+//helper functions
+function save(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+function load(key) {
+  return JSON.parse(localStorage.getItem(key));
+}
+
+//authentication functions
 
 async function register(name, email, password) {
     const response = await fetch(API_BASE + API_AUTH + API_REGISTER, {
@@ -74,13 +86,32 @@ function registerEventListener(formId, callback) {
     form.addEventListener("submit", callback);
 }
 
-function save(key, value) {
-    localStorage.setItem(key, JSON.stringify(value));
+async function onLogout(event) {
+  event.preventDefault();
+  localStorage.clear();
+  console.log("logged out");
+  // refresh the page
+  window.location.reload();
+} 
+
+function loadUserProfile() {
+  const profileElement = document.getElementById('user-profile');
+
+  const profile = load('profile');
+  if (profile) {
+      profileElement.textContent = `Logged in as: ${profile.name}`;
+      profileElement.insertAdjacentHTML('beforeend', '<div> <button id="logout">Logout</button> </div>');
+      const logoutButton = document.getElementById('logout');
+      if (logoutButton) {
+          logoutButton.addEventListener('click', onLogout);
+      }
+  }
+  return profile;
 }
 
-function load(key) {
-    return JSON.parse(localStorage.getItem(key));
-}
+
+// Blog Post Functions
+
 
 async function getPosts(profileName) {
     if (!profileName) {
@@ -211,8 +242,6 @@ async function fetchBlogPosts(profileName) {
     renderCarouselPosts(posts.slice(0, 3)); // Pass the three latest posts to renderCarouselPosts
   }
 
-
-
 function getPostIdFromUrl() {
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get('id');
@@ -339,7 +368,6 @@ export async function updatePost(postId, updatedPost) {
       // Handle any network or other errors
     }
   }
-
   async function onUpdatePost(event) {
     event.preventDefault();
     const postId = getPostIdFromUrl();
@@ -432,10 +460,26 @@ export async function updatePost(postId, updatedPost) {
       }
     }
   }
+
+  async function addCreatePostButton() {
+    const profileElement = document.getElementById('create-post-button-container');
+    if (!profileElement) return;
+
+    const createPostButton = document.createElement('button');
+    createPostButton.textContent = 'Create Post';
+    createPostButton.addEventListener('click', () => {
+        window.location.href = 'post/createpost.html';
+    });
+    profileElement.appendChild(createPostButton);
+  }
+
   
+
+  // Carousel Functions
   const buttons = document.querySelectorAll("[data-carousel-button]");
 
 buttons.forEach(button => {
+  buttons.forEach(button => {
   button.addEventListener("click", () => {
     const offset = button.dataset.carouselButton === "next" ? 1 : -1;
     const slides = button.closest("[data-carousel]").querySelector("[data-slides]");
@@ -459,8 +503,10 @@ buttons.forEach(button => {
   });
 });
 
+  });
 
 function renderCarouselPosts(posts) {
+  function renderCarouselPosts(posts) {
     const carouselSlides = document.querySelector("[data-slides]");
     const carouselIndicators = document.querySelector("[data-carousel-indicators]");
     carouselSlides.innerHTML = ""; // Clear the carousel slides
@@ -501,42 +547,7 @@ function renderCarouselPosts(posts) {
       carouselIndicators.appendChild(indicatorElement);
     });
   }
-
-  async function onLogout(event) {
-    event.preventDefault();
-    localStorage.clear();
-    console.log("logged out");
-    // refresh the page
-    window.location.reload();
-} 
-
-// return true if logged in
-function loadUserProfile() {
-    const profileElement = document.getElementById('user-profile');
-  
-    const profile = load('profile');
-    if (profile) {
-        profileElement.textContent = `Logged in as: ${profile.name}`;
-        profileElement.insertAdjacentHTML('beforeend', '<div> <button id="logout">Logout</button> </div>');
-        const logoutButton = document.getElementById('logout');
-        if (logoutButton) {
-            logoutButton.addEventListener('click', onLogout);
-        }
-    }
-    return profile;
-  }
-  
-  async function addCreatePostButton() {
-    const profileElement = document.getElementById('create-post-button-container');
-    if (!profileElement) return;
-
-    const createPostButton = document.createElement('button');
-    createPostButton.textContent = 'Create Post';
-    createPostButton.addEventListener('click', () => {
-        window.location.href = 'post/createpost.html';
-    });
-    profileElement.appendChild(createPostButton);
-  }
+// Author Selection Form Functions
 
 async function hideAuthorSelectionForm() {
     const authorSelectionForm = document.getElementById('author-select-form');
@@ -561,6 +572,8 @@ async function onSelectAuthor(event) {
     loadBlogPosts(authorFree || authorSelected);
 }
 
+// Login/Register Links Functions
+
   async function loadLoginRegisterLinks() {
     const loginRegisterLinks = document.getElementById('login-register-links-container');
     loginRegisterLinks.innerHTML = ''; // Clear the container before rendering the links
@@ -577,11 +590,7 @@ async function onSelectAuthor(event) {
     loginRegisterLinks.appendChild(registerLink);
   }
 
-
-
-
-
-  // Call the loadSinglePost function when the post/index.html page loads
+  // Event Listeners
   window.addEventListener('load', () => {
     setAuthListeners();
     const loggedInProfile = loadUserProfile();
