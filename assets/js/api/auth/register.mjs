@@ -484,76 +484,82 @@ export async function updatePost(postId, updatedPost) {
     profileElement.appendChild(createPostButton);
   }
 
-  
 
-  // Carousel Functions
+
+// Carousel Functions
+function setupCarousel() {
   const buttons = document.querySelectorAll("[data-carousel-button]");
 
   buttons.forEach(button => {
-  button.addEventListener("click", () => {
-    const offset = button.dataset.carouselButton === "next" ? 1 : -1;
-    const slides = button.closest("[data-carousel]").querySelector("[data-slides]");
-    const activeSlide = slides.querySelector("[data-active]");
-    const indicators = button.closest("[data-carousel]").querySelectorAll(".carousel-indicator");
-    let newIndex = [...slides.children].indexOf(activeSlide) + offset;
-    
-    if (newIndex < 0) {
-      newIndex = slides.children.length - 1;
-    } else if (newIndex >= slides.children.length) {
-      newIndex = 0;
+    button.addEventListener("click", () => {
+      const offset = button.dataset.carouselButton === "next" ? 1 : -1;
+      const slides = button.closest("[data-carousel]").querySelector("[data-slides]");
+      const activeSlide = slides.querySelector("[data-active]");
+      const indicators = button.closest("[data-carousel]").querySelectorAll(".carousel-indicator");
+      let newIndex = [...slides.children].indexOf(activeSlide) + offset;
+      
+      if (newIndex < 0) {
+        newIndex = slides.children.length - 1;
+      } else if (newIndex >= slides.children.length) {
+        newIndex = 0;
+      }
+
+      // Remove active attribute from the previous slide and indicator
+      delete activeSlide.dataset.active;
+      indicators.forEach(indicator => indicator.classList.remove("active"));
+
+      // Set active attribute to the new slide and indicator
+      slides.children[newIndex].dataset.active = true;
+      indicators[newIndex].classList.add("active");
+    });
+  });
+}
+
+function renderCarouselPosts(posts) {
+  const carouselSlides = document.querySelector("[data-slides]");
+  const carouselIndicators = document.querySelector("[data-carousel-indicators]");
+  carouselSlides.innerHTML = ""; // Clear the carousel slides
+  carouselIndicators.innerHTML = ""; // Clear the carousel indicators
+
+  posts.forEach((post, index) => {
+    const slideElement = document.createElement("li");
+    slideElement.classList.add("slide");
+    if (index === 0) {
+      slideElement.dataset.active = true; // Set the first slide as active
     }
 
-    // Remove active attribute from the previous slide and indicator
-    delete activeSlide.dataset.active;
-    indicators.forEach(indicator => indicator.classList.remove("active"));
+    const postLink = document.createElement("a");
+    postLink.href = `/post/index.html?id=${post.id}`; // Use the unique post ID
 
-    // Set active attribute to the new slide and indicator
-    slides.children[newIndex].dataset.active = true;
-    indicators[newIndex].classList.add("active");
-  });
-  });
+    const imageElement = document.createElement("img");
+    if (post.media && post.media.url) {
+      imageElement.src = post.media.url;
+    } else {
+      imageElement.src = "https://via.placeholder.com/300";
+    }
+    imageElement.alt = post.title;
+    postLink.appendChild(imageElement);
 
-  function renderCarouselPosts(posts) {
-    const carouselSlides = document.querySelector("[data-slides]");
-    const carouselIndicators = document.querySelector("[data-carousel-indicators]");
-    carouselSlides.innerHTML = ""; // Clear the carousel slides
-    carouselIndicators.innerHTML = ""; // Clear the carousel indicators
-  
-    posts.forEach((post, index) => {
-      const slideElement = document.createElement("li");
-      slideElement.classList.add("slide");
-      if (index === 0) {
-        slideElement.dataset.active = true; // Set the first slide as active
-      }
-  
-      const imageElement = document.createElement("img");
-      if (post.media && post.media.url) {
-        imageElement.src = post.media.url;
-      } else {
-        imageElement.src = "https://via.placeholder.com/300";
-      }
-      imageElement.alt = post.title;
-      slideElement.appendChild(imageElement);
-  
-      carouselSlides.appendChild(slideElement);
-  
-      // Create indicators
-      const indicatorElement = document.createElement("button");
-      indicatorElement.classList.add("carousel-indicator");
-      if (index === 0) {
-        indicatorElement.classList.add("active");
-      }
-      indicatorElement.addEventListener("click", () => {
-        carouselSlides.querySelector("[data-active]").removeAttribute("data-active");
-        slideElement.dataset.active = true;
-        carouselIndicators.querySelectorAll(".active").forEach(indicator => {
-          indicator.classList.remove("active");
-        });
-        indicatorElement.classList.add("active");
+    slideElement.appendChild(postLink);
+    carouselSlides.appendChild(slideElement);
+
+    // Create indicators
+    const indicatorElement = document.createElement("button");
+    indicatorElement.classList.add("carousel-indicator");
+    if (index === 0) {
+      indicatorElement.classList.add("active");
+    }
+    indicatorElement.addEventListener("click", () => {
+      carouselSlides.querySelector("[data-active]").removeAttribute("data-active");
+      slideElement.dataset.active = true;
+      carouselIndicators.querySelectorAll(".active").forEach(indicator => {
+        indicator.classList.remove("active");
       });
-      carouselIndicators.appendChild(indicatorElement);
+      indicatorElement.classList.add("active");
     });
-  }
+    carouselIndicators.appendChild(indicatorElement);
+  });
+}
 // Author Selection Form Functions
 
 async function hideAuthorSelectionForm() {
