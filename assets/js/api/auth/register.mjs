@@ -83,7 +83,6 @@ function setAuthListeners() {
     registerEventListener("login-form", onAuth);
     registerEventListener("create-post-form", onCreatePost);
     registerEventListener("author-select-form", onSelectAuthor);
-
 }
 
 function registerEventListener(formId, callback) {
@@ -214,7 +213,7 @@ async function fetchBlogPosts(profileName) {
       }
   }
 
-    function renderBlogPosts(posts) {
+function renderBlogPosts(posts) {
   const blogPostsContainer = document.getElementById('blogPostsContainer');
   blogPostsContainer.innerHTML = ''; // Clear the container before rendering new posts
 
@@ -246,7 +245,7 @@ async function fetchBlogPosts(profileName) {
   });
 }
   
-    async function loadBlogPosts(profileName) {
+async function loadBlogPosts(profileName) {
     const posts = await fetchBlogPosts(profileName);
     posts.sort((a, b) => new Date(b.created) - new Date(a.created)); // Sort posts by creation date in descending order
     renderBlogPosts(posts);
@@ -258,28 +257,28 @@ function getPostIdFromUrl() {
     return urlParams.get('id');
   }
 
-  async function fetchSinglePost(postId) {
-    try {
-      const profile = load("profile");
-      if (!profile) {
-        throw new Error("Profile not found. Please log in.");
-      }
-      const response = await fetch(`${API_BASE}${API_POSTS_BASE}/${profile.name}/${postId}`, {
-        headers: {
-          'Authorization': `Bearer ${load('token')}`,
-          'X-Noroff-API-Key': API_KEY,
-        },
-      });
-
-      if (response.ok) {
-        return await response.json();
-      }
-
-      throw new Error('Failed to fetch post');
-    } catch (error) {
-      console.error('Error fetching post:', error);
-      return null;
+async function fetchSinglePost(postId) {
+  try {
+    const profile = load("profile");
+    if (!profile) {
+      throw new Error("Profile not found. Please log in.");
     }
+    const response = await fetch(`${API_BASE}${API_POSTS_BASE}/${profile.name}/${postId}`, {
+      headers: {
+        'Authorization': `Bearer ${load('token')}`,
+        'X-Noroff-API-Key': API_KEY,
+      },
+    });
+
+    if (response.ok) {
+      return await response.json();
+    }
+
+    throw new Error('Failed to fetch post');
+  } catch (error) {
+    console.error('Error fetching post:', error);
+    return null;
+  }
 }
 
 export async function updatePost(postId, updatedPost) {
@@ -305,31 +304,37 @@ export async function updatePost(postId, updatedPost) {
 }
 
 
-  export function renderSinglePost(post) {
-    const singlePostContainer = document.getElementById('singlePostContainer');
-    singlePostContainer.innerHTML = ''; // Clear the container before rendering the post
-  
-    const titleElement = document.createElement('h1');
-    titleElement.textContent = post.title;
-  
-    const bodyElement = document.createElement('p');
-    bodyElement.textContent = post.body;
-  
-    const imageElement = document.createElement('img');
-    imageElement.src = post.media.url; 
+export function renderSinglePost(post) {
+  const singlePostContainer = document.getElementById('singlePostContainer');
+  if (!singlePostContainer) return;
+  singlePostContainer.innerHTML = ''; // Clear the container before rendering the post
+
+  const titleElement = document.createElement('h1');
+  titleElement.textContent = post.title;
+
+  const bodyElement = document.createElement('p');
+  bodyElement.textContent = post.body;
+
+  const imageElement = document.createElement('img');
+  if (post.media && post.media.url) {
+    imageElement.src = post.media.url;
     imageElement.alt = post.media.alt;
+  } else {
+    imageElement.src = 'https://via.placeholder.com/300';
+    imageElement.alt = 'Placeholder image';
+  }
 
-    const authorElement = document.createElement('p');
-    authorElement.textContent = `Author: ${post.author.name}`;
-    
-    const publishDateElement = document.createElement('p');
-    publishDateElement.textContent = `Published: ${new Date(post.created).toLocaleString()}`;
+  const authorElement = document.createElement('p');
+  authorElement.textContent = `Author: ${post.author.name}`;
 
-    const deleteButton = document.createElement('button');
-    deleteButton.textContent = 'Delete Post';
-    deleteButton.addEventListener('click', () => {
-        deletePost(post.id);
-    });
+  const publishDateElement = document.createElement('p');
+  publishDateElement.textContent = `Published: ${new Date(post.created).toLocaleString()}`;
+
+  const deleteButton = document.createElement('button');
+  deleteButton.textContent = 'Delete Post';
+  deleteButton.addEventListener('click', () => {
+    deletePost(post.id);
+  });
 
   const profile = load("profile");
   if (profile && profile.name === post.author.name) {
@@ -341,148 +346,158 @@ export async function updatePost(postId, updatedPost) {
     singlePostContainer.appendChild(editButton);
   }
 
+  // Add other post details as needed (tags, author, etc.)
 
-    // Add other post details as needed (tags, author, etc.)
+  singlePostContainer.appendChild(titleElement);
+  singlePostContainer.appendChild(authorElement);
+  singlePostContainer.appendChild(publishDateElement);
+  singlePostContainer.appendChild(imageElement);
+  singlePostContainer.appendChild(bodyElement);
+  singlePostContainer.appendChild(deleteButton);
+}
   
-    singlePostContainer.appendChild(titleElement);
-    singlePostContainer.appendChild(authorElement);
-    singlePostContainer.appendChild(publishDateElement);
-    singlePostContainer.appendChild(imageElement);
-    singlePostContainer.appendChild(bodyElement);
-    singlePostContainer.appendChild(deleteButton);
+async function deletePost(postId) {
+  try {
+    document.getElementById("error-message").textContent = "";
+
+    const profile = load("profile");
+    if (!profile) {
+      throw new Error("Profile not found. Please log in.");
+    }
+
+    const post = await fetchSinglePost(postId);
+    if (!post) {
+      throw new Error("Post not found.");
+    }
+
+    const confirmDelete = confirm("Are you sure you want to delete this post?");
+    if (!confirmDelete) {
+      return; // Cancel deletion if the user doesn't confirm
+    }
+
+    const response = await fetch(`${API_BASE}${API_POSTS_BASE}/${profile.name}/${postId}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${load('token')}`,
+        'X-Noroff-API-Key': API_KEY,
+      },
+    });
+
+    if (response.ok) {
+      console.log('Post deleted successfully');
+      // Redirect to the appropriate page after successful deletion
+      window.location.href = '/index.html';
+    } else {
+      throw new Error(`Failed to delete post: ${response.status} ${response.statusText}`);
+    }
+  } catch (error) {
+    document.getElementById("error-message").textContent = error.message;
   }
-  
-  async function deletePost(postId) {
+}
+async function onUpdatePost(event) {
+  event.preventDefault();
+  const postId = getPostIdFromUrl();
+  if (postId) {
+    const formData = new FormData(event.target);
+    const updatedPost = Object.fromEntries(formData.entries());
+    updatedPost.tags = updatedPost.tags.split(',').map(tag => tag.trim());
+    updatedPost.media = {
+      url: updatedPost.mediaUrl,
+      alt: updatedPost.mediaAlt,
+    };
+    delete updatedPost.mediaUrl;
+    delete updatedPost.mediaAlt;
+
     try {
-      const profile = load("profile");
-      if (!profile) {
-        throw new Error("Profile not found. Please log in.");
-      }
-      const response = await fetch(`${API_BASE}${API_POSTS_BASE}/${profile.name}/${postId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${load('token')}`,
-          'X-Noroff-API-Key': API_KEY,
-        },
-      });
-  
-      if (response.ok) {
-        console.log('Post deleted successfully');
-        // Redirect to the appropriate page after successful deletion
-        window.location.href = '/index.html';
-      } else {
-        console.error('Failed to delete post:', response.status);
-        // Handle the error scenario, e.g., display an error message to the user
-      }
+      const updatedPostData = await updatePost(postId, updatedPost);
+      console.log('Updated post:', updatedPostData);
+      window.location.href = `/post/index.html?id=${postId}`;
     } catch (error) {
-      console.error('Error deleting post:', error);
-      // Handle any network or other errors
+      console.error('Error updating post:', error);
     }
   }
-  async function onUpdatePost(event) {
+}
+
+export async function populateEditForm() {
+  const postId = getPostIdFromUrl();
+  if (postId) {
+    const post = await fetchSinglePost(postId);
+    if (post) {
+      document.getElementById('title').value = post.data.title;
+      document.getElementById('body').value = post.data.body;
+      if (post.data.tags) {
+        document.getElementById('tags').value = post.data.tags.join(', ');
+      }
+      if (post.data.media && post.data.media.url) {
+        document.getElementById('mediaUrl').value = post.data.media.url;
+        document.getElementById('mediaAlt').value = post.data.media.alt || '';
+      }
+    }
+  }
+}
+
+export function setupEditForm() {
+  document.getElementById("edit-post-form").addEventListener("submit", async (event) => {
     event.preventDefault();
-    const postId = getPostIdFromUrl();
-    if (postId) {
-      const formData = new FormData(event.target);
-      const updatedPost = Object.fromEntries(formData.entries());
-      updatedPost.tags = updatedPost.tags.split(',').map(tag => tag.trim());
-      updatedPost.media = {
-        url: updatedPost.mediaUrl,
-        alt: updatedPost.mediaAlt,
-      };
-      delete updatedPost.mediaUrl;
-      delete updatedPost.mediaAlt;
-  
-      try {
-        const updatedPostData = await updatePost(postId, updatedPost);
-        console.log('Updated post:', updatedPostData);
-        window.location.href = `/post/index.html?id=${postId}`;
-      } catch (error) {
-        console.error('Error updating post:', error);
-      }
-    }
-  }
-  
-  export async function populateEditForm() {
-    const postId = getPostIdFromUrl();
-    if (postId) {
-      const post = await fetchSinglePost(postId);
-      if (post) {
-        document.getElementById('title').value = post.data.title;
-        document.getElementById('body').value = post.data.body;
-        if (post.data.tags) {
-          document.getElementById('tags').value = post.data.tags.join(', ');
-        }
-        if (post.data.media && post.data.media.url) {
-          document.getElementById('mediaUrl').value = post.data.media.url;
-          document.getElementById('mediaAlt').value = post.data.media.alt || '';
-        }
-      }
-    }
-  }
-  
-  export function setupEditForm() {
-    document.getElementById("edit-post-form").addEventListener("submit", async (event) => {
-      event.preventDefault();
-  
-      const postId = getPostIdFromUrl();
-      const title = document.getElementById("title").value.trim();
-      const body = document.getElementById("body").value.trim();
-      const tags = document.getElementById("tags").value.split(',').map(tag => tag.trim());
-      const mediaUrl = document.getElementById("mediaUrl").value.trim();
-      const mediaAlt = document.getElementById("mediaAlt").value.trim();
-  
-      if (!title || !body || !mediaUrl) {
-        alert("Title, Body, and Media URL are required.");
-        return;
-      }
-  
-      const updatedPost = {
-        title,
-        body,
-        tags,
-        media: {
-          url: mediaUrl,
-          alt: mediaAlt,
-        },
-      };
-  
-      try {
-        const updatedPostData = await updatePost(postId, updatedPost);
-        console.log("Post updated successfully:", updatedPostData);
-        alert("Post updated successfully!");
-        window.location.href = `/post/index.html?id=${postId}`;
-      } catch (error) {
-        console.error(error);
-        alert("Failed to update post. Please try again.");
-      }
-    });
-  }
-  
-  async function loadSinglePost() {
-    const postId = getPostIdFromUrl();
-    if (postId) {
-      const post = await fetchSinglePost(postId);
-      if (post) {
-        console.log('Post data:', post.data);
-        renderSinglePost(post.data);
-      } else {
-        console.error('Post not found');
-      }
-    }
-  }
 
-  async function addCreatePostButton() {
-    const profileElement = document.getElementById('create-post-button-container');
-    if (!profileElement) return;
+    const postId = getPostIdFromUrl();
+    const title = document.getElementById("title").value.trim();
+    const body = document.getElementById("body").value.trim();
+    const tags = document.getElementById("tags").value.split(',').map(tag => tag.trim());
+    const mediaUrl = document.getElementById("mediaUrl").value.trim();
+    const mediaAlt = document.getElementById("mediaAlt").value.trim();
 
-    const createPostButton = document.createElement('button');
-    createPostButton.textContent = 'Create Post';
-    createPostButton.addEventListener('click', () => {
-        window.location.href = 'post/createpost.html';
-    });
-    profileElement.appendChild(createPostButton);
+    if (!title || !body || !mediaUrl) {
+      alert("Title, Body, and Media URL are required.");
+      return;
+    }
+
+    const updatedPost = {
+      title,
+      body,
+      tags,
+      media: {
+        url: mediaUrl,
+        alt: mediaAlt,
+      },
+    };
+
+    try {
+      const updatedPostData = await updatePost(postId, updatedPost);
+      console.log("Post updated successfully:", updatedPostData);
+      alert("Post updated successfully!");
+      window.location.href = `/post/index.html?id=${postId}`;
+    } catch (error) {
+      console.error(error);
+      alert("Failed to update post. Please try again.");
+    }
+  });
+}
+
+async function loadSinglePost() {
+  const postId = getPostIdFromUrl();
+  if (postId) {
+    const post = await fetchSinglePost(postId);
+    if (post) {
+      // console.log('Post data:', post.data);
+      renderSinglePost(post.data);
+    } else {
+      console.error('Post not found');
+    }
   }
+}
+
+async function addCreatePostButton() {
+  const profileElement = document.getElementById('create-post-button-container');
+  if (!profileElement) return;
+
+  const createPostButton = document.createElement('button');
+  createPostButton.textContent = 'Create Post';
+  createPostButton.addEventListener('click', () => {
+      window.location.href = 'post/createpost.html';
+  });
+  profileElement.appendChild(createPostButton);
+}
 
 
 
@@ -563,26 +578,26 @@ function renderCarouselPosts(posts) {
 // Author Selection Form Functions
 
 async function hideAuthorSelectionForm() {
-    const authorSelectionForm = document.getElementById('author-select-form');
-    if (authorSelectionForm) {
-        authorSelectionForm.style.display = 'none';
-    }
+  const authorSelectionForm = document.getElementById('author-select-form');
+  if (authorSelectionForm) {
+      authorSelectionForm.style.display = 'none';
+  }
 }
 
 async function showAuthorSelectionForm() {
-    const authorSelectionForm = document.getElementById('author-select-form');
-    if (authorSelectionForm) {
-        authorSelectionForm.style.display = 'block';
-    }
+  const authorSelectionForm = document.getElementById('author-select-form');
+  if (authorSelectionForm) {
+      authorSelectionForm.style.display = 'block';
+  }
 }
 
 async function onSelectAuthor(event) {
-    event.preventDefault();
-    const formData = new FormData(event.target);
-    const authorFree = formData.get('author-free');
-    const authorSelected = formData.get('author');
+  event.preventDefault();
+  const formData = new FormData(event.target);
+  const authorFree = formData.get('author-free');
+  const authorSelected = formData.get('author');
 
-    loadBlogPosts(authorFree || authorSelected);
+  loadBlogPosts(authorFree || authorSelected);
 }
 
 // Login/Register Links Functions
