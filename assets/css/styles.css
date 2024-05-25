@@ -83,6 +83,12 @@ footer li {
     list-style-type: none;
 }
 
+#error-message {
+    color: red;
+    font-size: 0.8rem;
+    margin: 0;
+}
+
 .cta {
   background-color: rgba(53, 151, 131, 1);
   color: white;

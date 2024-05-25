@@ -26,11 +26,12 @@ async function register(name, email, password) {
         body: JSON.stringify({ name, email, password }),
     });
 
-    if (response.ok) {
-        return await response.json();
-    }
+    const body = await response.json();
 
-    throw new Error("Could not register the account");
+    if (response.ok) {
+        return body;
+    }
+    throw new Error("Could not register the account: " + body.errors.map((error) => error.message).join(", "));
 }
 
 async function login(email, password) {
@@ -49,22 +50,32 @@ async function login(email, password) {
         return profile;
     }
 
-    throw new Error("Could not login the account");
+    const body = await response.json();
+
+    if (response.ok) {
+        return body;
+    }
+    throw new Error("Could not login the account: " + body.errors.map((error) => error.message).join(", "));
 }
 
 async function onAuth(event) {
-    event.preventDefault();
+  document.getElementById("error-message").textContent = "";
+  event.preventDefault();
     const name = event.target.name.value;
     const email = event.target.email.value;
     const password = event.target.password.value;
 
-    if (event.srcElement.id === "login-form") {
-        await login(email, password);
-    } else {
-        await register(name, email, password);
-        await login(email, password);
+    try {
+      if (event.srcElement.id === "login-form") {
+          await login(email, password);
+      } else {
+          await register(name, email, password);
+          await login(email, password);
+      }
+      window.location.href = "/"; // Redirect to the home page
+    } catch (error) {
+      document.getElementById("error-message").textContent = error.message;
     }
-    window.location.href = "/"; // Redirect to the home page
 }
 
 function setAuthListeners() {
