@@ -587,6 +587,7 @@ async function onSelectAuthor(event) {
 
   async function loadLoginRegisterLinks() {
     const loginRegisterLinks = document.getElementById('login-register-links-container');
+    if (!loginRegisterLinks) return;
     loginRegisterLinks.innerHTML = ''; // Clear the container before rendering the links
   
     const loginLink = document.createElement('a');
