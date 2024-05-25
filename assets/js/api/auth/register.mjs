@@ -489,7 +489,6 @@ export async function updatePost(postId, updatedPost) {
   // Carousel Functions
   const buttons = document.querySelectorAll("[data-carousel-button]");
 
-buttons.forEach(button => {
   buttons.forEach(button => {
   button.addEventListener("click", () => {
     const offset = button.dataset.carouselButton === "next" ? 1 : -1;
@@ -512,8 +511,6 @@ buttons.forEach(button => {
     slides.children[newIndex].dataset.active = true;
     indicators[newIndex].classList.add("active");
   });
-});
-
   });
 
   function renderCarouselPosts(posts) {
