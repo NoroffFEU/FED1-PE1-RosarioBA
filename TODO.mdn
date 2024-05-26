@@ -27,14 +27,13 @@ Low/optional:
 
 5.	Implement container queries to enable an advanced responsive layout.
 
-6.   create an about page? 
+
 
 
 Semidone:
 
 •	As a user, I want to view a static list of the 12 latest posts in a responsive thumbnail grid on the blog feed page, so I can easily select which post to read.
 
-•	As the owner, I want a validated register form that allows me to create a new account by entering my name, email and password. (not anymore)
 
 •	/index.html (Blog Feed Page)
 •	/post/index.html (Blog Post Public Page)
