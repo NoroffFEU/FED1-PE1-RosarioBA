@@ -165,9 +165,7 @@ async function createPost(postData) {
     }
 
     const newPost = await response.json();
-    const newPostId = newPost.data.id; // Get the ID of the new post
-    
-    return newPostId; // Return the new post ID
+    return newPost.data;
 }
 
 async function onCreatePost(event) {
@@ -190,11 +188,13 @@ async function onCreatePost(event) {
     delete postData.mediaAlt;
 
     try {
-        const newPostId = await createPost(postData);
+        const postData = await createPost(postData);
+        const newPostId = postData.id;
+        const postAuthor = postData.author.name
         console.log('New post created with ID:', newPostId);
 
         // Redirect to the single post page
-        window.location.href = `/post/index.html?id=${newPostId}`;
+        window.location.href = `/post/index.html?id=${newPostId}&author=${postAuthor}`;
     } catch (error) {
         console.error('An error occurred:', error);
         // Handle any network or other errors
@@ -235,7 +235,7 @@ function renderBlogPosts(posts) {
 
     const titleElement = document.createElement('h2');
     const titleLink = document.createElement('a');
-    titleLink.href = `post/index.html?id=${post.id}`;
+    titleLink.href = `post/index.html?id=${post.id}&author=${post.author.name}`;
     titleLink.textContent = post.title;
     titleElement.appendChild(titleLink);
     contentElement.appendChild(titleElement);
@@ -258,12 +258,14 @@ function getPostIdFromUrl() {
   }
 
 async function fetchSinglePost(postId) {
+function getPostAuthorNameFromUrl() {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get('author');
+}
+
+async function fetchSinglePost(postAuthor, postId) {
   try {
-    const profile = load("profile");
-    if (!profile) {
-      throw new Error("Profile not found. Please log in.");
-    }
-    const response = await fetch(`${API_BASE}${API_POSTS_BASE}/${profile.name}/${postId}`, {
+    const response = await fetch(`${API_BASE}${API_POSTS_BASE}/${postAuthor}/${postId}`, {
       headers: {
         'Authorization': `Bearer ${load('token')}`,
         'X-Noroff-API-Key': API_KEY,
@@ -281,12 +283,16 @@ async function fetchSinglePost(postId) {
   }
 }
 
-export async function updatePost(postId, updatedPost) {
+export async function updatePost(postAuthor, postId, updatedPost) {
   const profile = load("profile");
   if (!profile) {
     throw new Error("Profile not found. Please log in.");
   }
-  const response = await fetch(`${API_BASE}${API_POSTS_BASE}/${profile.name}/${postId}`, {
+  if (!postAuthor == profile.name) {
+    throw new Error("You are not authorized to delete this post.");
+  }
+
+  const response = await fetch(`${API_BASE}${API_POSTS_BASE}/${postAuthor}/${postId}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -331,17 +337,19 @@ export function renderSinglePost(post) {
   publishDateElement.textContent = `Published: ${new Date(post.created).toLocaleString()}`;
 
   const deleteButton = document.createElement('button');
-  deleteButton.textContent = 'Delete Post';
-  deleteButton.addEventListener('click', () => {
-    deletePost(post.id);
-  });
 
   const profile = load("profile");
   if (profile && profile.name === post.author.name) {
+    deleteButton.textContent = 'Delete Post';
+    deleteButton.addEventListener('click', () => {
+      deletePost(post);
+    });
+    singlePostContainer.appendChild(deleteButton);
+  
     const editButton = document.createElement('button');
     editButton.textContent = 'Edit Post';
     editButton.addEventListener('click', () => {
-      window.location.href = `/post/edit.html?id=${post.id}`;
+      window.location.href = `/post/edit.html?id=${post.id}&author=${post.author.name}`;
     });
     singlePostContainer.appendChild(editButton);
   }
@@ -353,10 +361,11 @@ export function renderSinglePost(post) {
   singlePostContainer.appendChild(publishDateElement);
   singlePostContainer.appendChild(imageElement);
   singlePostContainer.appendChild(bodyElement);
-  singlePostContainer.appendChild(deleteButton);
 }
   
-async function deletePost(postId) {
+async function deletePost(post) {
+  const postId = post.id;
+  const postAuthor = post.author.name;
   try {
     document.getElementById("error-message").textContent = "";
 
@@ -364,8 +373,11 @@ async function deletePost(postId) {
     if (!profile) {
       throw new Error("Profile not found. Please log in.");
     }
+    if (!postAuthor == profile.name) {
+      throw new Error("You are not authorized to delete this post.");
+    }
 
-    const post = await fetchSinglePost(postId);
+    const post = await fetchSinglePost(postAuthor, postId);
     if (!post) {
       throw new Error("Post not found.");
     }
@@ -375,7 +387,7 @@ async function deletePost(postId) {
       return; // Cancel deletion if the user doesn't confirm
     }
 
-    const response = await fetch(`${API_BASE}${API_POSTS_BASE}/${profile.name}/${postId}`, {
+    const response = await fetch(`${API_BASE}${API_POSTS_BASE}/${postAuthor}/${postId}`, {
       method: 'DELETE',
       headers: {
         'Authorization': `Bearer ${load('token')}`,
@@ -397,7 +409,8 @@ async function deletePost(postId) {
 async function onUpdatePost(event) {
   event.preventDefault();
   const postId = getPostIdFromUrl();
-  if (postId) {
+  const postAuthor = getPostAuthorNameFromUrl();
+  if (postId && postAuthor) {
     const formData = new FormData(event.target);
     const updatedPost = Object.fromEntries(formData.entries());
     updatedPost.tags = updatedPost.tags.split(',').map(tag => tag.trim());
@@ -409,9 +422,10 @@ async function onUpdatePost(event) {
     delete updatedPost.mediaAlt;
 
     try {
-      const updatedPostData = await updatePost(postId, updatedPost);
+      const updatedPostData = await updatePost(postAuthor, postId, updatedPost);
       console.log('Updated post:', updatedPostData);
-      window.location.href = `/post/index.html?id=${postId}`;
+      const post = updatedPostData.data;
+      window.location.href = `/post/index.html?id=${postId}&author=${post.author.name}`;
     } catch (error) {
       console.error('Error updating post:', error);
     }
@@ -420,8 +434,9 @@ async function onUpdatePost(event) {
 
 export async function populateEditForm() {
   const postId = getPostIdFromUrl();
+  const postAuthor = getPostAuthorNameFromUrl();
   if (postId) {
-    const post = await fetchSinglePost(postId);
+    const post = await fetchSinglePost(postAuthor, postId);
     if (post) {
       document.getElementById('title').value = post.data.title;
       document.getElementById('body').value = post.data.body;
@@ -438,8 +453,9 @@ export async function populateEditForm() {
 
 async function loadSinglePost() {
   const postId = getPostIdFromUrl();
+  const postAuthor = getPostAuthorNameFromUrl();
   if (postId) {
-    const post = await fetchSinglePost(postId);
+    const post = await fetchSinglePost(postAuthor, postId);
     if (post) {
       // console.log('Post data:', post.data);
       renderSinglePost(post.data);
@@ -506,7 +522,7 @@ function renderCarouselPosts(posts) {
     }
 
     const postLink = document.createElement("a");
-    postLink.href = `/post/index.html?id=${post.id}`; // Use the unique post ID
+    postLink.href = `/post/index.html?id=${post.id}&author=${post.author.name}`; // Use the unique post ID
 
     const imageElement = document.createElement("img");
     if (post.media && post.media.url) {
@@ -594,19 +610,18 @@ window.addEventListener('load', () => {
           addCreatePostButton();
           loadBlogPosts(loggedInProfile.name);
       }
-      if (window.location.pathname.includes('/post/index.html')) {   
-          loadSinglePost();
-      }
   } else {
-      showAuthorSelectionForm();
-      loadLoginRegisterLinks()
-    }
-    
-    if (window.location.pathname.includes('/post/edit.html')) {
-      populateEditForm();
-      document.getElementById('edit-post-form').addEventListener('submit', onUpdatePost);
-    }
-  });
+    showAuthorSelectionForm();
+    loadLoginRegisterLinks()
+  }
   
+  if (window.location.pathname.includes('/post/edit.html')) {
+    populateEditForm();
+    document.getElementById('edit-post-form').addEventListener('submit', onUpdatePost);
+  } else if (window.location.pathname.includes('/post/index.html')) {   
+    loadSinglePost();
+  }
+});
+
 
 
