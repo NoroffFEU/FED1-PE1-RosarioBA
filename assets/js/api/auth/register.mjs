@@ -173,36 +173,36 @@ async function createPost(postData) {
 }
 
 async function onCreatePost(event) {
-    event.preventDefault();
-    const form = event.target;
-    const formData = new FormData(form);
-    const postData = Object.fromEntries(formData.entries());
-    
+  event.preventDefault();
+  const form = event.target;
+  const formData = new FormData(form);
+  const postData = Object.fromEntries(formData.entries());
+  
 
-    const tagsInput = document.getElementById('tags').value;
-    const tags = tagsInput ? tagsInput.split(',').map(tag => tag.trim()) : [];
-    postData.tags = tags;
+  const tagsInput = document.getElementById('tags').value;
+  const tags = tagsInput ? tagsInput.split(',').map(tag => tag.trim()) : [];
+  postData.tags = tags;
 
-    postData.media = {
-        url: postData.mediaUrl,
-        alt: postData.mediaAlt,
-    };
+  postData.media = {
+      url: postData.mediaUrl,
+      alt: postData.mediaAlt,
+  };
 
-    delete postData.mediaUrl;
-    delete postData.mediaAlt;
+  delete postData.mediaUrl;
+  delete postData.mediaAlt;
 
-    try {
-        const postData = await createPost(postData);
-        const newPostId = postData.id;
-        const postAuthor = postData.author.name
-        console.log('New post created with ID:', newPostId);
+  try {
+      const createdPost = await createPost(postData);
+      const newPostId = createdPost.id;
+      const postAuthor = createdPost.author.name
+      console.log('New post created with ID:', newPostId);
 
-        // Redirect to the single post page
-        window.location.href = `/post/index.html?id=${newPostId}&author=${postAuthor}`;
-    } catch (error) {
-        console.error('An error occurred:', error);
-        // Handle any network or other errors
-    }
+      // Redirect to the single post page
+      window.location.href = `/post/index.html?id=${newPostId}&author=${postAuthor}`;
+  } catch (error) {
+      console.error('An error occurred:', error);
+      // Handle any network or other errors
+  }
 }
 
 export { createPost };
