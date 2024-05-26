@@ -257,7 +257,6 @@ function getPostIdFromUrl() {
     return urlParams.get('id');
   }
 
-async function fetchSinglePost(postId) {
 function getPostAuthorNameFromUrl() {
   const urlParams = new URLSearchParams(window.location.search);
   return urlParams.get('author');
