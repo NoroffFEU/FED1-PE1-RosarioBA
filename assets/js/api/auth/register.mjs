@@ -339,6 +339,9 @@ export function renderSinglePost(post) {
   const publishDateElement = document.createElement('p');
   publishDateElement.textContent = `Published: ${new Date(post.created).toLocaleString()}`;
 
+  const deleteButtonContainer = document.createElement('div');
+  deleteButtonContainer.classList.add('delete-button-container');
+
   const deleteButton = document.createElement('button');
 
   const profile = load("profile");
@@ -347,7 +350,8 @@ export function renderSinglePost(post) {
     deleteButton.addEventListener('click', () => {
       deletePost(post);
     });
-    singlePostContainer.appendChild(deleteButton);
+    deleteButtonContainer.appendChild(deleteButton);
+    singlePostContainer.appendChild(deleteButtonContainer);
   
     const editButton = document.createElement('button');
     editButton.textContent = 'Edit Post';
@@ -357,7 +361,7 @@ export function renderSinglePost(post) {
     singlePostContainer.appendChild(editButton);
   }
 
-  // Add other post details as needed (tags, author, etc.)
+  singlePostContainer.parentNode.insertBefore(deleteButtonContainer, singlePostContainer.nextSibling);
 
   singlePostContainer.appendChild(titleElement);
   singlePostContainer.appendChild(authorElement);

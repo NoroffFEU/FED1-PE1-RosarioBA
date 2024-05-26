@@ -19,9 +19,9 @@
         </nav>
         <div id="user-profile"></div>
     </header>
-    <main class="login-form">
+    <main class="post-form">
         <h1>Create Post</h1>
-        <form method="post" id="create-post-form" class="form-wrapper" action="/assets/js/api/post/create">
+        <form method="post" id="create-post-form" class="post-form-wrapper" action="/assets/js/api/post/create">
             <label for="title">Title:</label>
             <input type="text" id="title" name="title" required>
             <label for="body">Body:</label>
@@ -32,7 +32,7 @@
             <input type="text" id="mediaUrl" name="mediaUrl">
             <label for="mediaAlt">Media Alt Text:</label>
             <input type="text" id="mediaAlt" name="mediaAlt">
-            <button type="submit">Create Post</button>
+            <button type="submit" class="cta">Create Post</button>
         </form>
     </main>
     <footer>
