@@ -13,11 +13,6 @@ Urgent:
 •	Login details for the admin user (email and password)
 
 Medium:  
-
-•   create a better edit page 
-
-•   fix buttons issue
-
 * check async functions. E.g. onXxx methods
 
 Low/optional:
