@@ -217,37 +217,41 @@ async function fetchBlogPosts(profileName) {
       }
   }
 
-function renderBlogPosts(posts) {
-  const blogPostsContainer = document.getElementById('blogPostsContainer');
-  blogPostsContainer.innerHTML = ''; // Clear the container before rendering new posts
-
-  posts.forEach(post => {
-    const postElement = document.createElement('div');
-    postElement.classList.add('blog-post');
-
-    const imageElement = document.createElement('img');
-    if (post.media && post.media.url) {
-      imageElement.src = post.media.url;
-    } else {
-      imageElement.src = 'https://via.placeholder.com/300';
-    }
-    imageElement.alt = post.title;
-    postElement.appendChild(imageElement);
-
-    const contentElement = document.createElement('div');
-    contentElement.classList.add('blog-post-content');
-
-    const titleElement = document.createElement('h2');
-    const titleLink = document.createElement('a');
-    titleLink.href = `post/index.html?id=${post.id}&author=${post.author.name}`;
-    titleLink.textContent = post.title;
-    titleElement.appendChild(titleLink);
-    contentElement.appendChild(titleElement);
-
-    postElement.appendChild(contentElement);
-    blogPostsContainer.appendChild(postElement);
-  });
-}
+  function renderBlogPosts(posts) {
+    const blogPostsContainer = document.getElementById('blogPostsContainer');
+    blogPostsContainer.innerHTML = ''; // Clear the container before rendering new posts
+  
+    posts.forEach(post => {
+      const postElement = document.createElement('div');
+      postElement.classList.add('blog-post');
+  
+      const postLink = document.createElement('a');
+      postLink.href = `post/index.html?id=${post.id}&author=${post.author.name}`;
+  
+      const imageElement = document.createElement('img');
+      if (post.media && post.media.url) {
+        imageElement.src = post.media.url;
+      } else {
+        imageElement.src = 'https://via.placeholder.com/300';
+      }
+      imageElement.alt = post.title;
+      postLink.appendChild(imageElement);
+  
+      const contentElement = document.createElement('div');
+      contentElement.classList.add('blog-post-content');
+  
+      const titleElement = document.createElement('h2');
+      const titleLink = document.createElement('a');
+      titleLink.href = `post/index.html?id=${post.id}&author=${post.author.name}`;
+      titleLink.textContent = post.title;
+      titleElement.appendChild(titleLink);
+      contentElement.appendChild(titleElement);
+  
+      postElement.appendChild(postLink);
+      postElement.appendChild(contentElement);
+      blogPostsContainer.appendChild(postElement);
+    });
+  }
   
 async function loadBlogPosts(profileName) {
     const posts = await fetchBlogPosts(profileName);
@@ -484,6 +488,39 @@ async function addCreatePostButton() {
   profileElement.appendChild(createPostButton);
 }
 
+async function onFilter(event) {
+  event.preventDefault();
+  const form = event.target;
+  const formData = new FormData(form);
+  const filterCriteria = Object.fromEntries(formData.entries());
+  const profile = load("profile");
+
+  let posts = await fetchBlogPosts(profile ? profile.name : "");
+
+  if (filterCriteria.keyword) {
+    posts = posts.filter(post =>
+      post.title.toLowerCase().includes(filterCriteria.keyword.toLowerCase()) ||
+      post.body.toLowerCase().includes(filterCriteria.keyword.toLowerCase())
+    );
+  }
+
+  if (filterCriteria.tags) {
+    const tags = filterCriteria.tags.split(',').map(tag => tag.trim().toLowerCase());
+    posts = posts.filter(post =>
+      post.tags.some(tag => tags.includes(tag.toLowerCase()))
+    );
+  }
+
+  renderBlogPosts(posts);
+  renderCarouselPosts(posts.slice(0, 3)); // Update the carousel with filtered posts
+}
+
+function setFilterListener() {
+  const filterForm = document.getElementById('filter-form');
+  if (filterForm) {
+    filterForm.addEventListener('submit', onFilter);
+  }
+}
 
 
 // Carousel Functions
@@ -611,17 +648,19 @@ window.addEventListener('load', () => {
   const loggedInProfile = loadUserProfile();
   console.log('Logged in profile:', loggedInProfile);
   if (loggedInProfile) {
-      hideAuthorSelectionForm();
-      const blogPostsContainer = document.getElementById('blogPostsContainer');
-      if (blogPostsContainer) {
-          addCreatePostButton();
-          loadBlogPosts(loggedInProfile.name);
-      }
+    hideAuthorSelectionForm();
+    const blogPostsContainer = document.getElementById('blogPostsContainer');
+    if (blogPostsContainer) {
+      addCreatePostButton();
+      loadBlogPosts(loggedInProfile.name);
+    }
   } else {
     showAuthorSelectionForm();
-    loadLoginRegisterLinks()
+    loadLoginRegisterLinks();
   }
   
+  setFilterListener(); // Add this line to set the filter listener
+
   if (window.location.pathname.includes('/post/edit.html')) {
     populateEditForm();
     document.getElementById('edit-post-form').addEventListener('submit', onUpdatePost);
@@ -629,6 +668,5 @@ window.addEventListener('load', () => {
     loadSinglePost();
   }
 });
-
 
 

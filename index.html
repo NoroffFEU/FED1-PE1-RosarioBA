@@ -50,6 +50,13 @@
           </section>
           <section class="thumbnail-grid">
             <h1>Blog Posts</h1>
+            <div id="filter-container">
+                <form id="filter-form">
+                  <input type="text" id="filter-keyword" name="keyword" placeholder="Keyword">
+                  <input type="text" id="filter-tags" name="tags" placeholder="Tags (comma-separated)">
+                  <button type="submit">Apply Filters</button>
+                </form>
+              </div>
             <div id="create-post-button-container"></div>
             <section id="blogPostsContainer" class="blogpost-list">
                 <div id="pagination-controls">
