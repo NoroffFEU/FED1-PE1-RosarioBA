@@ -436,44 +436,6 @@ export async function populateEditForm() {
   }
 }
 
-export function setupEditForm() {
-  document.getElementById("edit-post-form").addEventListener("submit", async (event) => {
-    event.preventDefault();
-
-    const postId = getPostIdFromUrl();
-    const title = document.getElementById("title").value.trim();
-    const body = document.getElementById("body").value.trim();
-    const tags = document.getElementById("tags").value.split(',').map(tag => tag.trim());
-    const mediaUrl = document.getElementById("mediaUrl").value.trim();
-    const mediaAlt = document.getElementById("mediaAlt").value.trim();
-
-    if (!title || !body || !mediaUrl) {
-      alert("Title, Body, and Media URL are required.");
-      return;
-    }
-
-    const updatedPost = {
-      title,
-      body,
-      tags,
-      media: {
-        url: mediaUrl,
-        alt: mediaAlt,
-      },
-    };
-
-    try {
-      const updatedPostData = await updatePost(postId, updatedPost);
-      console.log("Post updated successfully:", updatedPostData);
-      alert("Post updated successfully!");
-      window.location.href = `/post/index.html?id=${postId}`;
-    } catch (error) {
-      console.error(error);
-      alert("Failed to update post. Please try again.");
-    }
-  });
-}
-
 async function loadSinglePost() {
   const postId = getPostIdFromUrl();
   if (postId) {
