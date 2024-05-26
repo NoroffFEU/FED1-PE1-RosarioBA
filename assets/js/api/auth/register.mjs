@@ -109,8 +109,12 @@ function loadUserProfile() {
 
   const profile = load('profile');
   if (profile) {
-      profileElement.textContent = `Logged in as: ${profile.name}`;
-      profileElement.insertAdjacentHTML('beforeend', '<div> <button id="logout">Logout</button> </div>');
+    profileElement.innerHTML = `
+    <div class="profile-container">
+        <div class="profile-info">Logged in as: ${profile.name}</div>
+        <button id="logout" class="logout-btn">Logout</button>
+      </div>
+    `;
       const logoutButton = document.getElementById('logout');
       if (logoutButton) {
           logoutButton.addEventListener('click', onLogout);
