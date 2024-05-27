@@ -19,9 +19,6 @@ Low/optional:
 
 1.	Implement pagination to allow for users to view more than 12 posts.
 
-2.	Implement a sorting mechanism to allow for users to change the order of posts.
-
-
 Semidone:
 
 •	/index.html (Blog Feed Page)
