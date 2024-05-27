@@ -4,13 +4,17 @@ Urgent:
 •   Deploy your project to a static hosting platform
 
 •	Use online testing tools to validate HTML and WCAG
+*fix issues 
 
 •  	Deliver the required files:
-•	Link to your GitHub classroom repository
+•	Link to your GitHub classroom repository: 
 •	Link to your public hosted demo
-•	Link to your Figma design assets
+•	Link to your Figma design assets: https://www.figma.com/design/knV0gudpSAOORm8zvyhJ7c/Project-exam-1?node-id=0-1&t=L9SaVKCVNabZQpKs-1
 •	Link to your public planning board
-•	Login details for the admin user (email and password)
+•	Login details for the admin user (email and password): rosarionew@stud.noroff.no rosarionew
+
+* create a multiauthor moment 
+* have all posts on the mainpage when logged out 
 
 Medium:  
 * check async functions. E.g. onXxx methods
@@ -31,9 +35,6 @@ Low/optional:
 
 
 Semidone:
-
-•	As a user, I want to view a static list of the 12 latest posts in a responsive thumbnail grid on the blog feed page, so I can easily select which post to read.
-
 
 •	/index.html (Blog Feed Page)
 •	/post/index.html (Blog Post Public Page)
