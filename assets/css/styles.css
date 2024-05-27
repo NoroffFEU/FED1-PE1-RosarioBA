@@ -135,6 +135,10 @@ footer li {
   float: right;
 }
 
+button:hover {
+  background-color: rgba(53, 151, 131, 0.8);
+}
+
 .profile-container {
   display: none;
 }
@@ -162,11 +166,12 @@ footer li {
   .logout-btn:hover {
     background-color: rgba(53, 151, 131, 0.8);
   }
-/*mainpage*/
 
-h1 {
+  h1 {
     font-size: 1.2rem;
 }
+
+/*mainpage*/
 
 .carousel {
   width: 100%;
@@ -262,10 +267,6 @@ h1 {
   padding: 10px;
 }
 
-  
-  
-  /*Thumbnail Grid*/
-
 .thumbnail-grid {
     max-width: 1000px;
     margin: auto;
@@ -289,7 +290,6 @@ h2 {
     padding: 0;
 }
 
-/*blogpost*/
 .blogpost-section {
     max-width: 750px;
     margin: auto;
@@ -311,7 +311,7 @@ img {
   align-items: center;
   margin-bottom: 20px;
 }
-
+/*post/index.hmtl*/
 #singlePostContainer p {
   font-family: 'Lora', serif;
   color: black;
@@ -399,6 +399,14 @@ textarea {
   .delete-button-container {
     text-align: center;
     margin-top: 20px;
+  }
+
+  .delete-button-container button {
+    background-color: saddlebrown; 
+  }
+
+  delete-button-container button:hover {
+    background-color: whitesmoke;
   }
 
 

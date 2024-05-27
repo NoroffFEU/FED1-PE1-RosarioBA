@@ -1,0 +1,60 @@
+@media (min-width: 500px) {
+    .post-form {
+      max-width: 1200px;
+      margin: 50px auto;
+      text-align: center;
+    }
+    
+    .post-form-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      text-align: left;
+    }
+    
+    .post-form-wrapper input,
+    .post-form-wrapper select,
+    .post-form-wrapper textarea {
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      border: 1px solid #c4c4c4;
+      border-radius: 5px;
+    }
+    
+    .post-form-wrapper textarea {
+      width: 400px;
+      height: 350px;
+    }
+    
+    .post-form-wrapper button {
+      margin-top: 20px;
+      align-self: flex-start;
+    }
+    }
+  
+  @media (min-width:600px) {
+      .profile-container {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        background-color: #f2f2f2;
+    }
+  
+    .blogpost-list {
+      grid-template-columns: 1fr 1fr;
+  }
+    
+    }
+  
+  @media (min-width: 900px) {
+    /* Styles for screens with a maximum width of 768px */
+    
+    .blogpost-list {
+      grid-template-columns: repeat(3, minmax(0,1fr));
+    }
+  }
+  
