@@ -27,6 +27,20 @@ function registerEventListener(formId, callback) {
   form.addEventListener("submit", callback);
 }
 
+function convertFormToSearchParams(form) {
+  const formData = new FormData(form);
+  const searchParams = new URLSearchParams();
+
+  for (const [key, value] of formData.entries()) {
+    if (value) {
+      searchParams.append(key, value);
+    }
+  }
+
+  return searchParams;
+}
+
+
 //authentication functions
 
 async function register(name, email, password) {
@@ -296,19 +310,6 @@ function renderBlogPosts(posts) {
     postElement.appendChild(contentElement);
     blogPostsContainer.appendChild(postElement);
   });
-}
-
-function convertFormToSearchParams(form) {
-  const formData = new FormData(form);
-  const searchParams = new URLSearchParams();
-
-  for (const [key, value] of formData.entries()) {
-    if (value) {
-      searchParams.append(key, value);
-    }
-  }
-
-  return searchParams;
 }
 
 async function onFilterBlogs(event) {
