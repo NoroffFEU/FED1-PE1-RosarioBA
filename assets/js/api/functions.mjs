@@ -224,8 +224,6 @@ async function onCreatePost(event) {
   }
 }
 
-export { createPost };
-
 async function fetchBlogPosts(profileName, params) {
   document.getElementById("error-message").textContent = '';
   try {
@@ -362,7 +360,7 @@ async function fetchSinglePost(postAuthor, postId) {
   }
 }
 
-export async function updatePost(postAuthor, postId, updatedPost) {
+async function updatePost(postAuthor, postId, updatedPost) {
   const profile = load("profile");
   if (!profile) {
     throw new Error("Profile not found. Please log in.");
@@ -389,7 +387,7 @@ export async function updatePost(postAuthor, postId, updatedPost) {
 }
 
 
-export function renderSinglePost(post) {
+function renderSinglePost(post) {
   const singlePostContainer = document.getElementById('singlePostContainer');
   if (!singlePostContainer) return;
   singlePostContainer.innerHTML = ''; // Clear the container before rendering the post
@@ -517,7 +515,7 @@ async function onUpdatePost(event) {
   }
 }
 
-export async function populateEditForm() {
+async function populateEditForm() {
   const postId = getPostIdFromUrl();
   const postAuthor = getPostAuthorNameFromUrl();
   if (postId) {
