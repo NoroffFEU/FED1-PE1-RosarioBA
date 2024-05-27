@@ -223,7 +223,13 @@ async function fetchBlogPosts(profileName, params) {
 }
 
 function renderBlogPostsNavigation(meta) {
-  const blogPostsNavigation = document.getElementById('blogPostsNavigation');
+  renderBlogPostsNavigationForDiv(meta, 'blogPostsNavigationBelow');
+  renderBlogPostsNavigationForDiv(meta, 'blogPostsNavigationAbove');
+}
+
+function renderBlogPostsNavigationForDiv(meta, divId) {
+ 
+  const blogPostsNavigation = document.getElementById(divId);
   if (!blogPostsNavigation) return;
 
   blogPostsNavigation.innerHTML = ''; // Clear the container before rendering the navigation
