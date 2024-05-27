@@ -47,7 +47,11 @@
                             <option value="asc">↑</option>
                         </select>
                         <input type="text" id="filter-page" name="page" value="1" hidden="true" />
-                        <input type="text" id="filter-limit" name="limit" value="12" hidden="true" />
+                        <select id="filter-limit" name="limit">
+                            <option value="4">4</option>
+                            <option value="8">8</option>
+                            <option value="12" selected>12</option>
+                            <option value="16">16</option>
                         <input type="text" id="filter-tags" name="_tag" placeholder="Tags (comma-separated)">
                         <button type="submit">Apply Filters</button>
                     </form>
