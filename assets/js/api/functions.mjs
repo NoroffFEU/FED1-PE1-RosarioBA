@@ -230,21 +230,25 @@ function renderBlogPostsNavigation(meta) {
 
   const prevButton = document.createElement('button');
   prevButton.textContent = 'Previous';
-  prevButton.addEventListener('click', () => {
-    if (meta.currentPage > 1) {
+  if (meta.currentPage > 1) {
+    prevButton.addEventListener('click', () => {
       document.getElementById('filter-page').value = meta.previousPage;
       onFilterBlogs(new Event('submit'));
-    }
-  });
-
+    });
+  } else {
+    prevButton.disabled = true
+  }
+  
   const nextButton = document.createElement('button');
   nextButton.textContent = 'Next';
-  nextButton.addEventListener('click', () => {
-    if (meta.currentPage < meta.pageCount) {
+  if (meta.currentPage < meta.pageCount) {
+    nextButton.addEventListener('click', () => {
       document.getElementById('filter-page').value = meta.nextPage;
       onFilterBlogs(new Event('submit'));
-    }
-  });
+    });
+  } else {
+    nextButton.disabled = true;
+  } 
 
   blogPostsNavigation.appendChild(prevButton);
   blogPostsNavigation.appendChild(nextButton);
