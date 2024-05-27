@@ -1,42 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="/favicon-32x32.png" type="image/png">
-    <link rel="stylesheet" href="../assets/css/styles.css">
-    <link rel="stylesheet" href="../assets/css/loginregister.css">
-    <link rel="stylesheet" href="../assets/css/media.css">
-    <script src="../assets/js/api/auth/register.mjs" type="module "defer></script>
-</head>
-<body>
-    <header>
-        <a href="/index.html" class="logo"> HotView Labs</a>
-        <nav>
-            <ul>
-                <li><a href="/index.html">Home</a></li>
-                <li><a href="/index.html">Blogs</a></li>
-            </ul>
-        </nav>
-        <div id="user-profile"></div>
-    </header>
-    <main class="login-form">
-    <h1>log into HotView Labs</h1>
-     <form method="post" id="login-form" action="/assets/js/api/auth/login">
-      <div class="form-wrapper">
-        <section>
-          <label for="email">Email</label>
-          <input type="email" id="email" name="email">
-          <label for="password">Password</label>
-          <input type="password" id="password" name="password">
-        </section>
-      </div>
-      <div id="error-message"></div>
-     <input type="submit" value="Login" class="cta cta-large"/>
-         </form>
-    </main>
-    <footer id="login-register-links-container">
-        <p>&copy; 2024 HotView Labs</p>
-    </footer>
-</body>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>HotView Labs | Login</title>
+        <link rel="icon" href="/favicon-32x32.png" type="image/png">
+        <link rel="stylesheet" href="../assets/css/styles.css">
+        <link rel="stylesheet" href="../assets/css/loginregister.css">
+        <link rel="stylesheet" href="../assets/css/media.css">
+        <script src="../assets/js/api/auth/register.mjs" type="module"></script>
+    </head>
+    <body>
+        <header>
+            <a href="/index.html" class="logo"> HotView Labs</a>
+            <nav>
+                <ul>
+                    <li><a href="/index.html">Home</a></li>
+                    <li><a href="/index.html">Blogs</a></li>
+                </ul>
+            </nav>
+            <div id="user-profile"></div>
+        </header>
+        <main class="login-form">
+        <h1>log into HotView Labs</h1>
+            <form method="post" id="login-form" action="/assets/js/api/auth/login">
+                <div class="form-wrapper">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password">
+                </div>
+                <div id="error-message"></div>
+                <input type="submit" value="Login" class="cta cta-large">
+            </form>
+        </main>
+        <footer id="login-register-links-container">
+            <p>&copy; 2024 HotView Labs</p>
+        </footer>
+    </body>
 </html>

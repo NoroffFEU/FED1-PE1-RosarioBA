@@ -1,68 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <title>HotView Labs | Home</title>
-    <link rel="icon" href="/favicon-32x32.png" type="image/png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="/assets/css/styles.css" rel="stylesheet">
-    <link href="/assets/css/homepage.css" rel="stylesheet">
-    <link href="/assets/css/media.css" rel="stylesheet">
-    <script src="/assets/js/api/auth/register.mjs" type="module"></script>
-</head>
-<body>
-    <header>
-        <a href="/index.html" class="logo"> HotView Labs</a>
-        <nav>
-            <ul>
-                <li><a href="/index.html">Home</a></li>
-                <li><a href="/index.html">Blogs</a></li>
-                <!-- Add more navigation links as needed -->
-            </ul>
-        </nav>
-        <div id="user-profile"></div>
-    </header>
-    <main>
-        <!-- let the user select the name of the blog author -->
-        <form id="author-select-form">
-            <label for="author-select">Select an author:</label>
-            <!-- free form-->
-            <input type="text" id="author-select-free" name="author-free">
-            <select id="author-select" name="author">
-                <option value="">Select an author</option>
-                <option value="rosarioaz">Rosario AZ</option>
-                <option value="rosarionew">Rosario New</option>
-            </select>
-            <button type="submit">Select</button>
-        </form>
-        <section aria-label="HotView Labs newest blogposts">
-            <div class="carousel" data-carousel>
-              <button class="carousel-button prev" data-carousel-button="prev">&#8250;</button>
-              <button class="carousel-button next" data-carousel-button="next">&#8249;</button>
-              <ul data-slides></ul>
-              <div class="carousel-indicators" data-carousel-indicators></div>
-            </div>
-          </section>
-          <section class="thumbnail-grid">
-            <h1>Blog Posts</h1>
-            <div id="filter-container">
-                <form id="filter-form">
-                  <input type="text" id="filter-keyword" name="keyword" placeholder="Keyword">
-                  <input type="text" id="filter-tags" name="tags" placeholder="Tags (comma-separated)">
-                  <button type="submit">Apply Filters</button>
-                </form>
-              </div>
-            <div id="create-post-button-container"></div>
-            <div id="blogPostsContainer" class="blogpost-list">
-                <div id="paginationContainer" class="pagination"></div>
-            </div>
-        </section>
-    </main>
-    <footer id="login-register-links-container">
-        <p>&copy; 2024 HotView Labs</p>
-    </footer>
-</body>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="">
+        <title>HotView Labs | Home</title>
+        <link rel="icon" href="/favicon-32x32.png" type="image/png">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="/assets/css/styles.css" rel="stylesheet">
+        <link href="/assets/css/homepage.css" rel="stylesheet">
+        <link href="/assets/css/media.css" rel="stylesheet">
+        <script src="/assets/js/api/auth/register.mjs" type="module"></script>
+    </head>
+    <body>
+        <header>
+            <a href="/index.html" class="logo"> HotView Labs</a>
+            <nav>
+                <ul>
+                    <li><a href="/index.html">Home</a></li>
+                    <li><a href="/index.html">Blogs</a></li>
+                    <!-- Add more navigation links as needed -->
+                </ul>
+            </nav>
+            <div id="user-profile"></div>
+        </header>
+        <main>
+            <!-- let the user select the name of the blog author -->
+            <form id="author-select-form">
+                <label for="author-select">Select an author:</label>
+                <!-- free form-->
+                <input type="text" id="author-select-free" name="author-free">
+                <select id="author-select" name="author">
+                    <option value="">Select an author</option>
+                    <option value="rosarioaz">Rosario AZ</option>
+                    <option value="rosarionew">Rosario New</option>
+                </select>
+                <button type="submit">Select</button>
+            </form>
+            <section aria-label="HotView Labs newest blogposts">
+                <div class="carousel" data-carousel>
+                    <button class="carousel-button prev" data-carousel-button="prev">&#8250;</button>
+                    <button class="carousel-button next" data-carousel-button="next">&#8249;</button>
+                <ul data-slides></ul>
+                <div class="carousel-indicators" data-carousel-indicators></div>
+            </section>
+            <section class="thumbnail-grid">
+                <h1>Blog Posts</h1>
+                <div id="filter-container">
+                    <form id="filter-form">
+                        <input type="text" id="filter-keyword" name="keyword" placeholder="Keyword">
+                        <input type="text" id="filter-tags" name="tags" placeholder="Tags (comma-separated)">
+                        <button type="submit">Apply Filters</button>
+                    </form>
+                </div>
+                <div id="create-post-button-container"></div>
+                <div id="blogPostsContainer" class="blogpost-list">
+                    <div id="paginationContainer" class="pagination"></div>
+                </div>
+            </section>
+        </main>
+        <footer id="login-register-links-container">
+            <p>&copy; 2024 HotView Labs</p>
+        </footer>
+    </body>
 </html>
