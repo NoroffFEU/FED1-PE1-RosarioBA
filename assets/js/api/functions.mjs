@@ -84,6 +84,7 @@ function setAuthListeners() {
     registerEventListener("login-form", onAuth);
     registerEventListener("create-post-form", onCreatePost);
     registerEventListener("blogs-filter-form", onFilterBlogs);
+    registerEventListener("edit-post-form", onUpdatePost);
 }
 
 function registerEventListener(formId, callback) {
@@ -659,26 +660,26 @@ async function loadLoginRegisterLinks() {
 function onPageLoad() {
   const profileToLoad = DEFAULT_PROFILE_NAME;
   setAuthListeners();
-  setupCarousel();
 
+  // path == /index.html or /
   const blogPostsContainer = document.getElementById('blogPostsContainer');
   if (blogPostsContainer) {
+    setupCarousel();
     const loggedInProfile = loadUserProfile();
     console.log('Logged in profile:', loggedInProfile);
     if (loggedInProfile) {
       addCreatePostButton();
       loadBlogPosts(loggedInProfile.name);
     } else {
-      loadBlogPosts(profileToLoad);     
+      loadBlogPosts(profileToLoad);
+      loadLoginRegisterLinks();
     }
-    loadLoginRegisterLinks();
-  }
-
-  if (window.location.pathname.includes('/post/edit.html')) {
-    populateEditForm();
-    document.getElementById('edit-post-form').addEventListener('submit', onUpdatePost);
-  } else if (window.location.pathname.includes('/post/index.html')) {   
-    loadSinglePost();
+  } else {
+    if (window.location.pathname.includes('/post/edit.html')) {
+      populateEditForm();
+    } else if (window.location.pathname.includes('/post/index.html')) {   
+      loadSinglePost();
+    }
   }
 }
 
