@@ -1,20 +1,14 @@
 Things that I have to do:
 
 Urgent:
-•   Deploy your project to a static hosting platform
-
-•	Use online testing tools to validate HTML and WCAG
-*fix issues 
 
 •  	Deliver the required files:
-•	Link to your GitHub classroom repository: 
+•	Link to your GitHub classroom repository: https://github.com/NoroffFEU/FED1-PE1-RosarioBA
 •	Link to your public hosted demo: https://main--fed1-pe1-rosarioba.netlify.app/
 •	Link to your Figma design assets: https://www.figma.com/design/knV0gudpSAOORm8zvyhJ7c/Project-exam-1?node-id=0-1&t=L9SaVKCVNabZQpKs-1
-•	Link to your public planning board
+•	Link to your public planning board: 
 •	Login details for the admin user (email and password): rosarionew@stud.noroff.no rosarionew
 
-* create a multiauthor moment 
-* have all posts on the mainpage when logged out 
 
 Medium:  
 * check async functions. E.g. onXxx methods

@@ -82,7 +82,6 @@ function setAuthListeners() {
     registerEventListener("register-form", onAuth);
     registerEventListener("login-form", onAuth);
     registerEventListener("create-post-form", onCreatePost);
-    registerEventListener("author-select-form", onSelectAuthor);
 }
 
 function registerEventListener(formId, callback) {
@@ -612,15 +611,6 @@ async function showAuthorSelectionForm() {
   }
 }
 
-async function onSelectAuthor(event) {
-  event.preventDefault();
-  const formData = new FormData(event.target);
-  const authorFree = formData.get('author-free');
-  const authorSelected = formData.get('author');
-
-  loadBlogPosts(authorFree || authorSelected);
-}
-
 // Login/Register Links Functions
 
 async function loadLoginRegisterLinks() {
@@ -642,21 +632,21 @@ async function loadLoginRegisterLinks() {
 
 // Event Listeners
 window.addEventListener('load', () => {
+  const defaultProfileName = 'rosarionew'
   setAuthListeners();
   setupCarousel();
   const loggedInProfile = loadUserProfile();
   console.log('Logged in profile:', loggedInProfile);
 
   if (loggedInProfile) {
-    hideAuthorSelectionForm();
     const blogPostsContainer = document.getElementById('blogPostsContainer');
     if (blogPostsContainer) {
       addCreatePostButton();
       loadBlogPosts(loggedInProfile.name);
     }
   } else {
-    showAuthorSelectionForm();
     loadLoginRegisterLinks();
+    loadBlogPosts(defaultProfileName);
   }
 
   setFilterListener(); // Add this line to set the filter listener
