@@ -1,0 +1,12 @@
+#singlePostContainer p {
+    font-family: 'Lora', serif;
+    color: black;
+    font-weight: normal;
+    font-size: 0.9em;
+    white-space: pre-line;
+  }
+
+  .delete-button-container {
+    text-align: center;
+    margin-top: 20px;
+  }
