@@ -596,21 +596,6 @@ function renderCarouselPosts(posts) {
     carouselIndicators.appendChild(indicatorElement);
   });
 }
-// Author Selection Form Functions
-
-async function hideAuthorSelectionForm() {
-  const authorSelectionForm = document.getElementById('author-select-form');
-  if (authorSelectionForm) {
-      authorSelectionForm.style.display = 'none';
-  }
-}
-
-async function showAuthorSelectionForm() {
-  const authorSelectionForm = document.getElementById('author-select-form');
-  if (authorSelectionForm) {
-      authorSelectionForm.style.display = 'block';
-  }
-}
 
 // Login/Register Links Functions
 
