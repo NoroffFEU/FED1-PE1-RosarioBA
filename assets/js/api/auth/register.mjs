@@ -631,8 +631,7 @@ async function loadLoginRegisterLinks() {
   loginRegisterLinks.appendChild(registerLink);
 }
 
-// Event Listeners
-window.addEventListener('load', () => {
+function onPageLoad() {
   const profileToLoad = DEFAULT_PROFILE_NAME;
   setAuthListeners();
   setupCarousel();
@@ -659,4 +658,7 @@ window.addEventListener('load', () => {
   } else if (window.location.pathname.includes('/post/index.html')) {   
     loadSinglePost();
   }
-});
+}
+
+// Event Listeners
+window.addEventListener('load', onPageLoad);
