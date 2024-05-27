@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description"
-    content="" />
+    <meta name="description" content="">
     <title>HotView Labs | Home</title>
     <link rel="icon" href="/favicon-32x32.png" type="image/png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="/assets/css/styles.css" rel="stylesheet">
-        <link href="/assets/css/homepage.css" rel="stylesheet">
-        <link href="/assets/css/media.css" rel="stylesheet">
+    <link href="/assets/css/styles.css" rel="stylesheet">
+    <link href="/assets/css/homepage.css" rel="stylesheet">
+    <link href="/assets/css/media.css" rel="stylesheet">
+    <script src="/assets/js/api/auth/register.mjs" type="module"></script>
 </head>
 <body>
     <header>
@@ -30,8 +30,7 @@
         <form id="author-select-form">
             <label for="author-select">Select an author:</label>
             <!-- free form-->
-            <input type="text" id="author-select" name="author-free">
-            <!-- fixed list of authors -->
+            <input type="text" id="author-select-free" name="author-free">
             <select id="author-select" name="author">
                 <option value="">Select an author</option>
                 <option value="rosarioaz">Rosario AZ</option>
@@ -47,8 +46,6 @@
               <div class="carousel-indicators" data-carousel-indicators></div>
             </div>
           </section>
-            </div>
-          </section>
           <section class="thumbnail-grid">
             <h1>Blog Posts</h1>
             <div id="filter-container">
@@ -59,14 +56,13 @@
                 </form>
               </div>
             <div id="create-post-button-container"></div>
-            <section id="blogPostsContainer" class="blogpost-list">
+            <div id="blogPostsContainer" class="blogpost-list">
                 <div id="paginationContainer" class="pagination"></div>
-                  </section>
+            </div>
         </section>
     </main>
     <footer id="login-register-links-container">
         <p>&copy; 2024 HotView Labs</p>
     </footer>
-    <script src="/assets/js/api/auth/register.mjs" type="module" defer></script>
 </body>
 </html>
