@@ -16,6 +16,17 @@ function load(key) {
   return JSON.parse(localStorage.getItem(key));
 }
 
+function registerEventListener(formId, callback) {
+  const form = document.getElementById(formId);
+
+  if (!form) {
+      console.log(`Form with id ${formId} not found`);
+      return;
+  }
+
+  form.addEventListener("submit", callback);
+}
+
 //authentication functions
 
 async function register(name, email, password) {
@@ -87,17 +98,6 @@ function setAuthListeners() {
     registerEventListener("edit-post-form", onUpdatePost);
 }
 
-function registerEventListener(formId, callback) {
-    const form = document.getElementById(formId);
-
-    if (!form) {
-        console.log(`Form with id ${formId} not found`);
-        return;
-    }
-
-    form.addEventListener("submit", callback);
-}
-
 async function onLogout(event) {
   event.preventDefault();
   localStorage.clear();
@@ -106,10 +106,9 @@ async function onLogout(event) {
   window.location.reload();
 } 
 
-function loadUserProfile() {
+function displayUserProfile(profile) {
   const profileElement = document.getElementById('user-profile');
 
-  const profile = load('profile');
   if (profile) {
     profileElement.innerHTML = `
     <div class="profile-container">
@@ -122,7 +121,6 @@ function loadUserProfile() {
           logoutButton.addEventListener('click', onLogout);
       }
   }
-  return profile;
 }
 
 
@@ -665,7 +663,8 @@ function onPageLoad() {
   const blogPostsContainer = document.getElementById('blogPostsContainer');
   if (blogPostsContainer) {
     setupCarousel();
-    const loggedInProfile = loadUserProfile();
+    const loggedInProfile = load('profile');
+    displayUserProfile(loggedInProfile);
     console.log('Logged in profile:', loggedInProfile);
     if (loggedInProfile) {
       addCreatePostButton();
