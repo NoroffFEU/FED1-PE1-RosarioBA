@@ -5,6 +5,7 @@ const API_AUTH = "/auth";
 const API_REGISTER = "/register";
 const API_LOGIN = "/login";
 const API_POSTS_BASE = "/blog/posts";
+const DEFAULT_PROFILE_NAME = 'rosarionew'
 
 //helper functions
 function save(key, value) {
@@ -632,9 +633,10 @@ async function loadLoginRegisterLinks() {
 
 // Event Listeners
 window.addEventListener('load', () => {
-  const defaultProfileName = 'rosarionew'
+  const profileToLoad = DEFAULT_PROFILE_NAME;
   setAuthListeners();
   setupCarousel();
+
   const loggedInProfile = loadUserProfile();
   console.log('Logged in profile:', loggedInProfile);
 
@@ -646,7 +648,7 @@ window.addEventListener('load', () => {
     }
   } else {
     loadLoginRegisterLinks();
-    loadBlogPosts(defaultProfileName);
+    loadBlogPosts(profileToLoad);
   }
 
   setFilterListener(); // Add this line to set the filter listener
