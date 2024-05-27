@@ -178,6 +178,8 @@ async function createPost(postData) {
 }
 
 async function onCreatePost(event) {
+  document.getElementById("error-message").textContent = '';
+
   event.preventDefault();
   const form = event.target;
   const formData = new FormData(form);
@@ -205,18 +207,19 @@ async function onCreatePost(event) {
       // Redirect to the single post page
       window.location.href = `/post/index.html?id=${newPostId}&author=${postAuthor}`;
   } catch (error) {
-      console.error('An error occurred:', error);
-      // Handle any network or other errors
+    document.getElementById("error-message").textContent = error.message;
   }
 }
 
 export { createPost };
 
 async function fetchBlogPosts(profileName, params) {
+  document.getElementById("error-message").textContent = '';
   try {
       const posts = await getPosts(profileName, params);
       return posts;
     } catch (error) {
+      document.getElementById("error-message").textContent = error.message;
       console.error('Error fetching blog posts:', error);
       return {data: []};
     }
@@ -353,6 +356,7 @@ async function fetchSinglePost(postAuthor, postId) {
 
     throw new Error('Failed to fetch post');
   } catch (error) {
+    // TODO handle error better
     console.error('Error fetching post:', error);
     return null;
   }
@@ -420,7 +424,7 @@ export function renderSinglePost(post) {
   if (profile && profile.name === post.author.name) {
     deleteButton.textContent = 'Delete Post';
     deleteButton.addEventListener('click', () => {
-      deletePost(post);
+      onDeletePost(post);
     });
     deleteButtonContainer.appendChild(deleteButton);
     singlePostContainer.appendChild(deleteButtonContainer);
@@ -442,7 +446,7 @@ export function renderSinglePost(post) {
   singlePostContainer.appendChild(bodyElement);
 }
   
-async function deletePost(post) {
+async function onDeletePost(post) {
   const postId = post.id;
   const postAuthor = post.author.name;
   try {
@@ -486,6 +490,8 @@ async function deletePost(post) {
   }
 }
 async function onUpdatePost(event) {
+  document.getElementById("error-message").textContent = '';
+
   event.preventDefault();
   const postId = getPostIdFromUrl();
   const postAuthor = getPostAuthorNameFromUrl();
@@ -506,7 +512,7 @@ async function onUpdatePost(event) {
       const post = updatedPostData.data;
       window.location.href = `/post/index.html?id=${postId}&author=${post.author.name}`;
     } catch (error) {
-      console.error('Error updating post:', error);
+      document.getElementById("error-message").textContent = error.message;
     }
   }
 }
@@ -639,11 +645,11 @@ async function loadLoginRegisterLinks() {
   loginRegisterLinks.innerHTML = ''; // Clear the container before rendering the links
 
   const loginLink = document.createElement('a');
-  loginLink.href = 'account/login.html';
+  loginLink.href = '/account/login.html';
   loginLink.textContent = 'Login';
 
   const registerLink = document.createElement('a');
-  registerLink.href = 'account/register.html';
+  registerLink.href = '/account/register.html';
   registerLink.textContent = 'Register';
 
   loginRegisterLinks.appendChild(loginLink);
@@ -655,18 +661,17 @@ function onPageLoad() {
   setAuthListeners();
   setupCarousel();
 
-  const loggedInProfile = loadUserProfile();
-  console.log('Logged in profile:', loggedInProfile);
-
-  if (loggedInProfile) {
-    const blogPostsContainer = document.getElementById('blogPostsContainer');
-    if (blogPostsContainer) {
+  const blogPostsContainer = document.getElementById('blogPostsContainer');
+  if (blogPostsContainer) {
+    const loggedInProfile = loadUserProfile();
+    console.log('Logged in profile:', loggedInProfile);
+    if (loggedInProfile) {
       addCreatePostButton();
       loadBlogPosts(loggedInProfile.name);
+    } else {
+      loadBlogPosts(profileToLoad);     
     }
-  } else {
     loadLoginRegisterLinks();
-    loadBlogPosts(profileToLoad);
   }
 
   if (window.location.pathname.includes('/post/edit.html')) {
