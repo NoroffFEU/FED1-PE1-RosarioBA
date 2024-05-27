@@ -36,9 +36,17 @@
             <section class="thumbnail-grid">
                 <h1>Blog Posts</h1>
                 <div id="filter-container">
-                    <form id="filter-form">
-                        <input type="text" id="filter-keyword" name="keyword" placeholder="Keyword">
-                        <input type="text" id="filter-tags" name="tags" placeholder="Tags (comma-separated)">
+                    <form id="blogs-filter-form">
+                        <select id="filter-sort" name="sort">
+                            <option value="updated" selected>Updated</option>
+                            <!--option value="created">Created</option-->
+                            <option value="title">Title</option>
+                        </select>
+                        <select id="filter-sort-order" name="sortOrder">
+                            <option value="desc" selected>↓</option>
+                            <option value="asc">↑</option>
+                        </select>
+                        <input type="text" id="filter-tags" name="_tag" placeholder="Tags (comma-separated)">
                         <button type="submit">Apply Filters</button>
                     </form>
                 </div>

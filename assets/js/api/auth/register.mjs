@@ -83,6 +83,7 @@ function setAuthListeners() {
     registerEventListener("register-form", onAuth);
     registerEventListener("login-form", onAuth);
     registerEventListener("create-post-form", onCreatePost);
+    registerEventListener("blogs-filter-form", onFilterBlogs);
 }
 
 function registerEventListener(formId, callback) {
@@ -127,15 +128,19 @@ function loadUserProfile() {
 // Blog Post Functions
 
 
-async function getPosts(profileName) {
+async function getPosts(profileName, params) {
    if (!profileName) {
     throw new Error("ProfileName missing.");
    }
-   const response = await fetch(`${API_BASE}${API_POSTS_BASE}/${profileName}`, {
+  let uri = `${API_BASE}${API_POSTS_BASE}/${profileName}`;
+  if (params && params.size > 0) {
+    uri = `${uri}?${params}`;
+  }
+  const response = await fetch(uri, {
      headers: {
         Authorization: `Bearer ${load("token")}`,
         "X-Noroff-API-Key": API_KEY,
-    },
+    }
   });
 
   if (!response.ok) {
@@ -207,9 +212,9 @@ async function onCreatePost(event) {
 
 export { createPost };
 
-async function fetchBlogPosts(profileName) {
+async function fetchBlogPosts(profileName, params) {
   try {
-      const posts = await getPosts(profileName);
+      const posts = await getPosts(profileName, params);
       return posts.data;
     } catch (error) {
       console.error('Error fetching blog posts:', error);
@@ -253,9 +258,33 @@ function renderBlogPosts(posts) {
   });
 }
 
+function convertFormToSearchParams(form) {
+  const formData = new FormData(form);
+  const searchParams = new URLSearchParams();
+
+  for (const [key, value] of formData.entries()) {
+    if (value) {
+      searchParams.append(key, value);
+    }
+  }
+
+  return searchParams;
+}
+
+async function onFilterBlogs(event) {
+  event.preventDefault();
+  const profile = load('profile');
+  let authorName = DEFAULT_PROFILE_NAME;
+  if (profile) {
+    authorName = profile.name;
+  }
+  loadBlogPosts(authorName);
+}
+
 async function loadBlogPosts(profileName) {
-  const posts = await fetchBlogPosts(profileName);
-  posts.sort((a, b) => new Date(b.created) - new Date(a.created)); // Sort posts by creation date in descending order
+  const searchBlogParams = convertFormToSearchParams(document.getElementById('blogs-filter-form'));
+  const posts = await fetchBlogPosts(profileName, searchBlogParams);
+  // posts.sort((a, b) => new Date(b.created) - new Date(a.created)); // Sort posts by creation date in descending order
   renderBlogPosts(posts);
   renderCarouselPosts(posts.slice(0, 3)); // Pass the three latest posts to renderCarouselPost
 }
@@ -488,40 +517,6 @@ async function addCreatePostButton() {
   profileElement.appendChild(createPostButton);
 }
 
-async function onFilter(event) {
-  event.preventDefault();
-  const form = event.target;
-  const formData = new FormData(form);
-  const filterCriteria = Object.fromEntries(formData.entries());
-  const profile = load("profile");
-
-  let posts = await fetchBlogPosts(profile ? profile.name : "");
-
-  if (filterCriteria.keyword) {
-    posts = posts.filter(post =>
-      post.title.toLowerCase().includes(filterCriteria.keyword.toLowerCase()) ||
-      post.body.toLowerCase().includes(filterCriteria.keyword.toLowerCase())
-    );
-  }
-
-  if (filterCriteria.tags) {
-    const tags = filterCriteria.tags.split(',').map(tag => tag.trim().toLowerCase());
-    posts = posts.filter(post =>
-      post.tags.some(tag => tags.includes(tag.toLowerCase()))
-    );
-  }
-
-  renderBlogPosts(posts);
-  renderCarouselPosts(posts.slice(0, 3)); // Update the carousel with filtered posts
-}
-
-function setFilterListener() {
-  const filterForm = document.getElementById('filter-form');
-  if (filterForm) {
-    filterForm.addEventListener('submit', onFilter);
-  }
-}
-
 // Carousel Functions
 function setupCarousel() {
   const buttons = document.querySelectorAll("[data-carousel-button]");
@@ -634,8 +629,6 @@ function onPageLoad() {
     loadLoginRegisterLinks();
     loadBlogPosts(profileToLoad);
   }
-
-  setFilterListener(); // Add this line to set the filter listener
 
   if (window.location.pathname.includes('/post/edit.html')) {
     populateEditForm();
