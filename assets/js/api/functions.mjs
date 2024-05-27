@@ -228,30 +228,30 @@ function renderBlogPostsNavigation(meta) {
 
   blogPostsNavigation.innerHTML = ''; // Clear the container before rendering the navigation
 
-  const prevButton = document.createElement('button');
-  prevButton.textContent = 'Previous';
-  if (meta.currentPage > 1) {
-    prevButton.addEventListener('click', () => {
-      document.getElementById('filter-page').value = meta.previousPage;
-      onFilterBlogs(new Event('submit'));
-    });
-  } else {
-    prevButton.disabled = true
+  function createPageButton(textContent, pageNumber, enabled) {
+    const button = document.createElement('button');
+    button.textContent = textContent;
+    if (enabled) {
+      button.addEventListener('click', () => {
+        document.getElementById('filter-page').value = pageNumber;
+        onFilterBlogs(new Event('submit'));
+      });
+    } else {
+      button.disabled = true;
+    }
+    return button;
   }
-  
-  const nextButton = document.createElement('button');
-  nextButton.textContent = 'Next';
-  if (meta.currentPage < meta.pageCount) {
-    nextButton.addEventListener('click', () => {
-      document.getElementById('filter-page').value = meta.nextPage;
-      onFilterBlogs(new Event('submit'));
-    });
-  } else {
-    nextButton.disabled = true;
-  } 
 
+  const firstButton = createPageButton('First', 1, meta.currentPage > 1);
+  const prevButton = createPageButton('Previous', meta.previousPage, meta.currentPage > 1);
+  const nextButton = createPageButton('Next', meta.nextPage, meta.currentPage < meta.pageCount);
+  const lastButton = createPageButton('Last', meta.pageCount, meta.currentPage < meta.pageCount);
+  
+  blogPostsNavigation.appendChild(firstButton);
   blogPostsNavigation.appendChild(prevButton);
+  blogPostsNavigation.appendChild(document.createTextNode(`Page ${meta.currentPage} of ${meta.pageCount}`));
   blogPostsNavigation.appendChild(nextButton);
+  blogPostsNavigation.appendChild(lastButton);
 } 
 
 function renderBlogPosts(posts) {
