@@ -46,6 +46,7 @@
                             <option value="desc" selected>↓</option>
                             <option value="asc">↑</option>
                         </select>
+                        <input type="text" id="filter-page" name="page" value="1" hidden="true" />
                         <input type="text" id="filter-limit" name="limit" value="12" hidden="true" />
                         <input type="text" id="filter-tags" name="_tag" placeholder="Tags (comma-separated)">
                         <button type="submit">Apply Filters</button>
@@ -53,8 +54,8 @@
                 </div>
                 <div id="create-post-button-container"></div>
                 <div id="blogPostsContainer" class="blogpost-list">
-                    <div id="paginationContainer" class="pagination"></div>
                 </div>
+                <div id="blogPostsNavigation"></div>
             </section>
         </main>
         <footer id="login-register-links-container">

@@ -215,12 +215,40 @@ export { createPost };
 async function fetchBlogPosts(profileName, params) {
   try {
       const posts = await getPosts(profileName, params);
-      return posts.data;
+      return posts;
     } catch (error) {
       console.error('Error fetching blog posts:', error);
-      return [];
+      return {data: []};
     }
 }
+
+function renderBlogPostsNavigation(meta) {
+  const blogPostsNavigation = document.getElementById('blogPostsNavigation');
+  if (!blogPostsNavigation) return;
+
+  blogPostsNavigation.innerHTML = ''; // Clear the container before rendering the navigation
+
+  const prevButton = document.createElement('button');
+  prevButton.textContent = 'Previous';
+  prevButton.addEventListener('click', () => {
+    if (meta.currentPage > 1) {
+      document.getElementById('filter-page').value = meta.previousPage;
+      onFilterBlogs(new Event('submit'));
+    }
+  });
+
+  const nextButton = document.createElement('button');
+  nextButton.textContent = 'Next';
+  nextButton.addEventListener('click', () => {
+    if (meta.currentPage < meta.pageCount) {
+      document.getElementById('filter-page').value = meta.nextPage;
+      onFilterBlogs(new Event('submit'));
+    }
+  });
+
+  blogPostsNavigation.appendChild(prevButton);
+  blogPostsNavigation.appendChild(nextButton);
+} 
 
 function renderBlogPosts(posts) {
   const blogPostsContainer = document.getElementById('blogPostsContainer');
@@ -283,8 +311,9 @@ async function onFilterBlogs(event) {
 
 async function loadBlogPosts(profileName) {
   const searchBlogParams = convertFormToSearchParams(document.getElementById('blogs-filter-form'));
-  const posts = await fetchBlogPosts(profileName, searchBlogParams);
-  // posts.sort((a, b) => new Date(b.created) - new Date(a.created)); // Sort posts by creation date in descending order
+  const response = await fetchBlogPosts(profileName, searchBlogParams);
+  const posts = response.data;
+  renderBlogPostsNavigation(response.meta);
   renderBlogPosts(posts);
   renderCarouselPosts(posts.slice(0, 3)); // Pass the three latest posts to renderCarouselPost
 }
