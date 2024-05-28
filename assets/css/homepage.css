@@ -122,3 +122,20 @@ h2 {
     align-items: center;
     margin-bottom: 20px;
 }
+
+#blogPostsNavigationAbove, #blogPostsNavigationBelow {
+    font-family: lora;
+    font-weight: bold;
+    font-size: 13px;
+    display: flex;
+    justify-content:space-around;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#filter-sort, #filter-sort-order, #filter-limit, #filter-tags {
+    font-family: lora;
+    font-weight: bold;
+    justify-content:space-around;
+    padding: 8px;
+}
