@@ -5,9 +5,16 @@
     font-size: 0.9em;
     white-space: pre-line;
 }
+
+.edit-button-container{
+    text-align: center;
+    float: right;
+}
+
 .delete-button-container {
     text-align: center;
     margin-top: 20px;
+    float: right;
 }
 
 .delete-button-container button {
