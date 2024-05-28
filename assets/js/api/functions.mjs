@@ -412,6 +412,17 @@ function renderSinglePost(post) {
 
   const publishDateElement = document.createElement('p');
   publishDateElement.textContent = `Published: ${new Date(post.created).toLocaleString()}`;
+   // Create a new element to display the tags
+   const tagsElement = document.createElement('p');
+   tagsElement.textContent = 'Tags: ';
+ 
+   // Loop through the tags array and create a span for each tag
+   post.tags.forEach(tag => {
+     const tagSpan = document.createElement('span');
+     tagSpan.textContent = tag;
+     tagSpan.classList.add('tag');
+     tagsElement.appendChild(tagSpan);
+   });
 
   const deleteButtonContainer = document.createElement('div');
   deleteButtonContainer.classList.add('delete-button-container');
@@ -429,6 +440,7 @@ function renderSinglePost(post) {
   
     const editButton = document.createElement('button');
     editButton.textContent = 'Edit Post';
+    editButton.classList.add('edit-button-container'); // Add a class to style the button
     editButton.addEventListener('click', () => {
       window.location.href = `/post/edit.html?id=${post.id}&author=${post.author.name}`;
     });
@@ -440,6 +452,7 @@ function renderSinglePost(post) {
   singlePostContainer.appendChild(titleElement);
   singlePostContainer.appendChild(authorElement);
   singlePostContainer.appendChild(publishDateElement);
+  singlePostContainer.appendChild(tagsElement); 
   singlePostContainer.appendChild(imageElement);
   singlePostContainer.appendChild(bodyElement);
 }
@@ -641,7 +654,7 @@ async function loadLoginRegisterLinks() {
   const loginRegisterLinks = document.getElementById('login-register-links-container');
   if (!loginRegisterLinks) return;
   loginRegisterLinks.innerHTML = ''; // Clear the container before rendering the links
-
+  
   const loginLink = document.createElement('a');
   loginLink.href = '/account/login.html';
   loginLink.textContent = 'Login';
