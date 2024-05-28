@@ -32,14 +32,32 @@ body {
 }
 
 header, footer {
+  align-items: center;
+
+}
+
+header, footer {
   display: flex;
   align-items: center;
 
 }
 
-header a, footer a {
+footer {
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+
+}
+
+header a {
   padding: 20px;
 }
+
+footer a {
+  padding: 10px;
+}
+
+
 
 a {
   text-decoration: none;
@@ -83,6 +101,13 @@ footer {
 footer li {
     list-style-type: none;
 }
+
+login-register-links-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
 
 #error-message {
     color: red;
@@ -188,3 +213,4 @@ img {
   line-height: 1.5;
   padding: 10px;
 }
+

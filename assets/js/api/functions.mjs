@@ -654,7 +654,7 @@ async function loadLoginRegisterLinks() {
   const loginRegisterLinks = document.getElementById('login-register-links-container');
   if (!loginRegisterLinks) return;
   loginRegisterLinks.innerHTML = ''; // Clear the container before rendering the links
-  
+
   const loginLink = document.createElement('a');
   loginLink.href = '/account/login.html';
   loginLink.textContent = 'Login';
@@ -662,6 +662,12 @@ async function loadLoginRegisterLinks() {
   const registerLink = document.createElement('a');
   registerLink.href = '/account/register.html';
   registerLink.textContent = 'Register';
+ 
+  loginRegisterLinks.innerHTML = `
+  <h2>Admin Portal</h2>
+  <div class="footer-links">
+  </div>
+  `;
 
   loginRegisterLinks.appendChild(loginLink);
   loginRegisterLinks.appendChild(registerLink);
