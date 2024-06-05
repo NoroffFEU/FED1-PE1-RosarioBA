@@ -2,6 +2,9 @@
 <img width="902" alt="image" src="https://github.com/NoroffFEU/FED1-PE1-RosarioBA/assets/146356539/3ed0dd98-622e-4698-b3e9-ec6d8fbef737">
 A simple overview of the use/purpose of the project.
 
+# FED1 Project Exam 1 Brief
+A simple overview of the use/purpose of the project.
+
 ## 📝 Description
 This project demonstrates my ability to interpret a brief, plan a solution, design a user interface, and build and test a responsive web application. It incorporates the skills learned throughout the FED1 program, including design, HTML, CSS, and JavaScript. The project involves creating a front-end user interface for the Noroff Blog API (https://docs.noroff.dev/docs/v2/blog/posts) with responsive features and dynamic content.
 
@@ -28,6 +31,12 @@ This project demonstrates my ability to interpret a brief, plan a solution, desi
 - As the owner, I want a validated login form that allows me to request and save a token to my browser by entering my email and password.
 - As the owner, I want a validated register form that allows me to create a new account by entering my name, email, and password.
 - As the owner, I want a create post page that allows me to create new blog posts by entering the title, body content, and image URL.
+
+## 🚀 Getting Started
+To get started with the project, follow these steps:
+1. Clone the repository: `git clone https://github.com/NoroffFEU/FED1-PE1-RosarioBA.git`
+2. Install the dependencies: `npm install`
+3. Run the development server: `npm start`
 
 ## 🛠️ Built With
 - HTML5
